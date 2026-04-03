@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // Use Mapbox Geocoding API for autocomplete (cheaper than Google)
-    const url = `https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(input)}&country=au&limit=5&types=address,place,poi,neighborhood,locality&access_token=${MAPBOX_TOKEN}`;
+    const url = `https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(input)}&country=au&limit=5&types=address,place,neighborhood,locality,street&access_token=${MAPBOX_TOKEN}`;
 
     const res = await fetch(url);
     if (!res.ok) {
