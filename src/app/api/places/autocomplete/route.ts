@@ -26,14 +26,22 @@ export async function GET(req: NextRequest) {
           full_address: string;
           place_formatted?: string;
         };
-      }) => ({
-        placeId: feature.id,
-        description: feature.properties.full_address,
-        mainText: feature.properties.name,
-        secondaryText:
-          feature.properties.place_formatted ??
-          feature.properties.full_address,
-      })
+        geometry: {
+          coordinates: [number, number];
+        };
+      }) => {
+        const [lng, lat] = feature.geometry.coordinates;
+        return {
+          placeId: feature.id,
+          description: feature.properties.full_address,
+          mainText: feature.properties.name,
+          secondaryText:
+            feature.properties.place_formatted ??
+            feature.properties.full_address,
+          lat,
+          lng,
+        };
+      }
     );
 
     return NextResponse.json({ suggestions });

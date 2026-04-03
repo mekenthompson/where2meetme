@@ -1,12 +1,13 @@
 "use client";
 
 import { create } from "zustand";
+import { nanoid } from "nanoid";
 import type { Participant, TravelMode, VenueType, SearchResult } from "@/lib/types";
 
 function createParticipant(index: number): Participant {
   const labels = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta"];
   return {
-    id: crypto.randomUUID(),
+    id: nanoid(),
     label: labels[index] ?? `Traveler ${index + 1}`,
     originPlaceId: null,
     originLat: null,

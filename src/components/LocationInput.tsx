@@ -20,6 +20,8 @@ interface Suggestion {
   description: string;
   mainText: string;
   secondaryText: string;
+  lat?: number;
+  lng?: number;
 }
 
 export function LocationInput({
@@ -70,6 +72,18 @@ export function LocationInput({
     setIsOpen(false);
     setSuggestions([]);
 
+    // Use coordinates from suggestion if available (preferred)
+    if (suggestion.lat !== undefined && suggestion.lng !== undefined) {
+      onChange({
+        placeId: suggestion.placeId,
+        displayName: suggestion.mainText,
+        lat: suggestion.lat,
+        lng: suggestion.lng,
+      });
+      return;
+    }
+
+    // Fallback to details endpoint if coordinates missing
     try {
       const res = await fetch(
         `/api/places/details?placeId=${encodeURIComponent(suggestion.placeId)}`
@@ -83,7 +97,7 @@ export function LocationInput({
         lng: data.lng,
       });
     } catch {
-      // Fallback: use suggestion without coordinates
+      // Unable to get coordinates
     }
   };
 

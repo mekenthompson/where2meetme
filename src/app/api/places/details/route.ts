@@ -9,8 +9,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Mapbox feature IDs can be used to retrieve the feature directly
-    const url = `https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(placeId)}&limit=1&access_token=${MAPBOX_TOKEN}`;
+    // Use Mapbox Retrieve API to get feature details by ID
+    const url = `https://api.mapbox.com/search/geocode/v6/retrieve/${encodeURIComponent(placeId)}?access_token=${MAPBOX_TOKEN}`;
 
     const res = await fetch(url);
     if (!res.ok) {
