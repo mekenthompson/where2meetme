@@ -34,7 +34,9 @@ export function LocationInput({
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeDescendant, setActiveDescendant] = useState<string>("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const listboxId = useRef(`listbox-${Math.random().toString(36).slice(2)}`).current;
 
   const fetchSuggestions = useCallback(async (input: string) => {
     if (input.length < 3) {
@@ -71,6 +73,7 @@ export function LocationInput({
     setQuery(suggestion.mainText);
     setIsOpen(false);
     setSuggestions([]);
+    setActiveDescendant("");
 
     // Use coordinates from suggestion if available (preferred)
     if (suggestion.lat !== undefined && suggestion.lng !== undefined) {
@@ -105,6 +108,7 @@ export function LocationInput({
     setQuery("");
     setSuggestions([]);
     setIsOpen(false);
+    setActiveDescendant("");
     onClear();
   };
 
@@ -120,22 +124,39 @@ export function LocationInput({
           onBlur={() => setTimeout(() => setIsOpen(false), 200)}
           placeholder={placeholder}
           className="flex-1 bg-transparent text-sm text-on-surface placeholder:text-on-surface-variant/50 outline-none font-body"
+          role="combobox"
+          aria-label="Search for a location"
+          aria-expanded={isOpen}
+          aria-controls={isOpen ? listboxId : undefined}
+          aria-activedescendant={activeDescendant || undefined}
+          aria-autocomplete="list"
         />
         {isLoading && (
           <Icon name="progress_activity" size={18} className="text-on-surface-variant animate-spin" />
         )}
         {query && !isLoading && (
-          <button onClick={handleClear} className="text-on-surface-variant hover:text-on-surface">
+          <button
+            onClick={handleClear}
+            className="text-on-surface-variant hover:text-on-surface"
+            aria-label="Clear location"
+          >
             <Icon name="close" size={18} />
           </button>
         )}
       </div>
 
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-surface-lowest rounded-xl shadow-ambient overflow-hidden">
+        <div
+          id={listboxId}
+          role="listbox"
+          className="absolute z-50 top-full left-0 right-0 mt-1 bg-surface-lowest rounded-xl shadow-ambient overflow-hidden"
+        >
           {suggestions.map((s) => (
             <button
               key={s.placeId}
+              id={`option-${s.placeId}`}
+              role="option"
+              aria-selected={false}
               onMouseDown={() => handleSelect(s)}
               className="w-full flex items-start gap-3 px-3 py-2.5 hover:bg-surface-low text-left transition-colors"
             >

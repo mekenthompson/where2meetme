@@ -152,6 +152,7 @@ export default function HomePage() {
           onClick={handleSearch}
           disabled={!allLocationsSet || isSearching}
           className="btn-primary w-full py-5 flex items-center justify-center gap-2 text-lg font-semibold font-headline disabled:opacity-40 disabled:cursor-not-allowed"
+          aria-label={isSearching ? "Searching for fair midpoint" : "Find the fair midpoint"}
         >
           {isSearching ? (
             <>
@@ -167,7 +168,7 @@ export default function HomePage() {
         </button>
 
         {error && (
-          <p className="text-sm text-parity-bad text-center mt-3 font-body">
+          <p className="text-sm text-parity-bad text-center mt-3 font-body" role="alert" aria-live="polite">
             {getErrorMessage(error)}
           </p>
         )}

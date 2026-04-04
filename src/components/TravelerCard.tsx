@@ -115,6 +115,7 @@ export function TravelerCard({
           <button
             onClick={() => onRemove(participant.id)}
             className="text-on-surface-variant hover:text-on-surface transition-colors"
+            aria-label={`Remove traveler ${participant.label}`}
           >
             <Icon name="close" size={20} />
           </button>

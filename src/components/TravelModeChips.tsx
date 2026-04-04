@@ -17,13 +17,15 @@ interface TravelModeChipsProps {
 
 export function TravelModeChips({ selected, onSelect }: TravelModeChipsProps) {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2" role="radiogroup" aria-label="Travel mode">
       {modes.map(({ mode, icon, label }) => {
         const isSelected = selected === mode;
         return (
           <button
             key={mode}
             onClick={() => onSelect(mode)}
+            role="radio"
+            aria-checked={isSelected}
             className={`flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
               isSelected
                 ? "bg-primary text-on-primary"
