@@ -11,16 +11,7 @@ const venueTypeToGoogleType: Record<VenueType, string> = {
   bar: "bar",
   park: "park",
   library: "library",
-  coworking: "cafe", // No direct Google type; search cafes with keyword
-};
-
-const venueTypeKeyword: Record<VenueType, string | undefined> = {
-  cafe: undefined,
-  restaurant: undefined,
-  bar: undefined,
-  park: undefined,
-  library: undefined,
-  coworking: "coworking",
+  coworking: "coworking_space",
 };
 
 async function searchNearbyVenues(
@@ -30,39 +21,55 @@ async function searchNearbyVenues(
   radius = 3000
 ): Promise<VenueResult[]> {
   const type = venueTypeToGoogleType[venueType];
-  const keyword = venueTypeKeyword[venueType];
 
-  let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=${type}&key=${GOOGLE_API_KEY}`;
-  if (keyword) {
-    url += `&keyword=${encodeURIComponent(keyword)}`;
-  }
+  const url = "https://places.googleapis.com/v1/places:searchNearby";
+  const body = {
+    includedTypes: [type],
+    maxResultCount: 15,
+    locationRestriction: {
+      circle: {
+        center: { latitude: lat, longitude: lng },
+        radius: radius,
+      },
+    },
+  };
 
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": GOOGLE_API_KEY,
+      "X-Goog-FieldMask":
+        "places.id,places.displayName,places.formattedAddress,places.shortFormattedAddress,places.location,places.rating,places.userRatingCount,places.photos",
+    },
+    body: JSON.stringify(body),
+  });
+
   if (!res.ok) return [];
 
   const data = await res.json();
-  if (data.status !== "OK" || !data.results) return [];
+  if (!data.places) return [];
 
-  return data.results.slice(0, 15).map(
+  return data.places.map(
     (place: {
-      place_id: string;
-      name: string;
-      vicinity: string;
-      formatted_address?: string;
-      geometry: { location: { lat: number; lng: number } };
+      id: string;
+      displayName?: { text: string };
+      formattedAddress?: string;
+      shortFormattedAddress?: string;
+      location?: { latitude: number; longitude: number };
       rating?: number;
-      user_ratings_total?: number;
-      photos?: { photo_reference: string }[];
+      userRatingCount?: number;
+      photos?: { name: string }[];
     }): VenueResult => ({
-      placeId: place.place_id,
-      name: place.name,
-      address: place.formatted_address ?? place.vicinity,
-      shortAddress: place.vicinity,
-      lat: place.geometry.location.lat,
-      lng: place.geometry.location.lng,
+      placeId: place.id,
+      name: place.displayName?.text ?? "Unknown",
+      address: place.formattedAddress ?? place.shortFormattedAddress ?? "",
+      shortAddress: place.shortFormattedAddress ?? "",
+      lat: place.location?.latitude ?? lat,
+      lng: place.location?.longitude ?? lng,
       rating: place.rating ?? null,
-      userRatingsTotal: place.user_ratings_total ?? null,
-      photoReference: place.photos?.[0]?.photo_reference ?? null,
+      userRatingsTotal: place.userRatingCount ?? null,
+      photoReference: place.photos?.[0]?.name ?? null,
       fairnessScore: 0, // Calculated later
       travelTimes: {},
     })
