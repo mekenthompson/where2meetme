@@ -33,6 +33,37 @@
   --color-parity-bad: #ba1a1a;
 }
 
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Primary: Lighter Navy for dark backgrounds */
+    --color-primary: #4d5eff;
+    --color-primary-container: #1a237e;
+    --color-on-primary: #ffffff;
+
+    /* Secondary: Brighter Green for dark backgrounds */
+    --color-secondary: #4caf50;
+    --color-on-secondary: #ffffff;
+
+    /* Surface hierarchy (dark tonal layering) */
+    --color-surface: #121214;
+    --color-surface-container-low: #1a1a1d;
+    --color-surface-container-lowest: #0a0a0c;
+    --color-surface-container-high: #222225;
+    --color-surface-container-highest: #2a2a2e;
+
+    /* Text */
+    --color-on-surface: #e2e2e5;
+    --color-on-surface-variant: #a0a3a8;
+    --color-outline-variant: #3a3a3e;
+
+    /* Parity colors (brighter for dark mode) */
+    --color-parity-good: #4caf50;
+    --color-parity-ok: #ffb74d;
+    --color-parity-bad: #ef5350;
+  }
+}
+
 @theme inline {
   --color-primary: var(--color-primary);
   --color-primary-container: var(--color-primary-container);
@@ -77,9 +108,21 @@ body {
   transform: scale(0.98);
 }
 
+@media (prefers-color-scheme: dark) {
+  .btn-primary {
+    background: linear-gradient(135deg, #4d5eff, #3949ab);
+  }
+}
+
 /* Ambient shadow (tinted, not black) */
 .shadow-ambient {
   box-shadow: 0 4px 32px rgba(26, 28, 29, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .shadow-ambient {
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+  }
 }
 
 /* Ghost border for accessibility */
