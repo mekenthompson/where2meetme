@@ -100,8 +100,8 @@ export default function HomePage() {
       </header>
 
       {/* Hero */}
-      <section className="px-5 pt-4 pb-6">
-        <h1 className="text-[3.5rem] font-extrabold font-headline text-on-surface leading-[1.1] tracking-[-0.02em]">
+      <section className="px-5 pt-2 pb-3">
+        <h1 className="text-[2rem] sm:text-[2.5rem] md:text-[3.5rem] font-extrabold font-headline text-on-surface leading-[1.1] tracking-[-0.02em]">
           Where
           <span className="text-primary">2</span>
           Meet
@@ -113,7 +113,7 @@ export default function HomePage() {
       </section>
 
       {/* Traveler Cards */}
-      <section className="px-5 space-y-3">
+      <section className="px-5 space-y-2">
         {participants.map((p, i) => (
           <TravelerCard
             key={p.id}
@@ -137,7 +137,7 @@ export default function HomePage() {
       </section>
 
       {/* Venue Type */}
-      <section className="px-5 pt-6 space-y-2">
+      <section className="px-5 pt-4 space-y-2">
         <h3 className="text-sm font-bold text-primary uppercase tracking-widest font-body">
           What are you looking for?
         </h3>
@@ -148,7 +148,7 @@ export default function HomePage() {
       <RecentSpots />
 
       {/* Search CTA */}
-      <section className="px-5 pt-6 pb-8">
+      <section className="px-5 pt-4 pb-6">
         <button
           onClick={handleSearch}
           disabled={!allLocationsSet || isSearching}

@@ -84,7 +84,7 @@ export function TravelerCard({
   };
 
   return (
-    <div className="bg-surface-lowest rounded-2xl p-6 shadow-ambient space-y-4">
+    <div className="bg-surface-lowest rounded-2xl p-3 sm:p-5 shadow-ambient space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-1 h-6 bg-primary rounded-full" />
