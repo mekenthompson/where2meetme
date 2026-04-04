@@ -6,14 +6,16 @@ import { VenueCardCompact } from "@/components/VenueCardCompact";
 import { VenueDetail } from "@/components/VenueDetail";
 import { ResultsMap } from "@/components/ResultsMap";
 import { Icon } from "@/components/Icon";
+import { FilterChips, type FilterType } from "@/components/FilterChips";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { VenueResult } from "@/lib/types";
 
 export default function ResultsPage() {
   const router = useRouter();
   const { result } = useSearchStore();
   const [selectedVenue, setSelectedVenue] = useState<VenueResult | null>(null);
+  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
 
   if (!result) {
     return (
@@ -51,6 +53,32 @@ export default function ResultsPage() {
     library: "Libraries",
     coworking: "Coworking spaces",
   };
+
+  const filteredVenues = useMemo(() => {
+    const venues = [...result.venues];
+
+    switch (activeFilter) {
+      case "topRated":
+        return venues.sort((a, b) => {
+          const ratingA = a.rating ?? 0;
+          const ratingB = b.rating ?? 0;
+          return ratingB - ratingA;
+        });
+
+      case "closest":
+        return venues.sort((a, b) => {
+          const avgTimeA = Object.values(a.travelTimes).reduce((sum, t) => sum + t, 0) / Object.values(a.travelTimes).length;
+          const avgTimeB = Object.values(b.travelTimes).reduce((sum, t) => sum + t, 0) / Object.values(b.travelTimes).length;
+          return avgTimeA - avgTimeB;
+        });
+
+      case "bestMatch":
+      case "all":
+      default:
+        // Already sorted by fairness score (default sort from API)
+        return venues;
+    }
+  }, [result.venues, activeFilter]);
 
   return (
     <div className="flex flex-col min-h-dvh">
@@ -90,9 +118,14 @@ export default function ResultsPage() {
         </p>
       </section>
 
+      {/* Filter chips */}
+      <section className="px-5 pb-4">
+        <FilterChips selected={activeFilter} onSelect={setActiveFilter} />
+      </section>
+
       {/* Venue cards */}
       <section className="px-5 pb-6 space-y-6">
-        {result.venues.map((venue, i) => {
+        {filteredVenues.map((venue, i) => {
           if (i === 0) {
             return (
               <VenueCardHero
