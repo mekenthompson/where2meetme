@@ -32,6 +32,7 @@ export function VenueCard({ venue, participants, onSelect, rank }: VenueCardProp
     <button
       onClick={() => onSelect(venue)}
       className="w-full text-left bg-surface-lowest rounded-2xl overflow-hidden shadow-ambient hover:shadow-lg transition-all active:scale-[0.98]"
+      aria-label={`View details for ${venue.name}, ${Math.round(venue.fairnessScore)}% fair`}
     >
       {venue.photoReference && (
         <div className="relative h-40 overflow-hidden">

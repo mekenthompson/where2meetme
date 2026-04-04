@@ -19,13 +19,15 @@ interface VenueTypeSelectorProps {
 
 export function VenueTypeSelector({ selected, onSelect }: VenueTypeSelectorProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
+    <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none" role="radiogroup" aria-label="Venue type">
       {venueTypes.map(({ type, icon, label }) => {
         const isSelected = selected === type;
         return (
           <button
             key={type}
             onClick={() => onSelect(type)}
+            role="radio"
+            aria-checked={isSelected}
             className={`flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
               isSelected
                 ? "bg-primary text-on-primary shadow-ambient"

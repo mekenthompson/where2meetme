@@ -15,6 +15,7 @@ export function Icon({ name, className = "", filled = false, size = 24 }: IconPr
           ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
           : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
       }}
+      aria-hidden="true"
     >
       {name}
     </span>
