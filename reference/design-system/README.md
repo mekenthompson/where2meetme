@@ -28,6 +28,31 @@ The primary input screen. Features:
 
 ---
 
+### v1-desktophome — Desktop Home / Search Screen
+
+![Desktop Home Screen](v1-desktophome/screen.png)
+
+The wide/desktop layout of the home screen. Features:
+- Same **"Equality in every mile"** hero headline, adapted for wide viewport
+- Side-by-side Traveler Alpha / Beta cards in a two-column grid
+- Travel mode chips inline with each traveler card
+- Venue type selector (Coffee, Dining, Drinks) as icon pills
+- **"Find the Fair Midpoint"** gradient CTA centred below the input cards
+- Mini map preview panel with "Calculating Trajectories..." loading state
+- Inspirational quote block: *"Mathematical fairness isn't just about distance — it's about respecting the value of everyone's time."*
+- **Recent Spots** grid showing 3 venue cards with parity meters and ratings
+- Top navigation bar (Home, Find Venues, About) with profile avatar
+- Footer with copyright, privacy policy, accessibility links
+
+**What this tells us for Where2Meet.Me:**
+- Desktop layout uses a centred max-width container (~1200px) with generous whitespace
+- Traveler cards sit side-by-side at wider breakpoints (responsive grid)
+- The map preview panel is a natural candidate for the interactive Mapbox map
+- Recent Spots grid shows venue cards in a 3-column layout with parity meters
+- This validates that the mobile-first design scales well to desktop without a separate design
+
+---
+
 ### v1-details — Venue Detail Screen
 
 ![Details Screen](v1-details/screen.png)

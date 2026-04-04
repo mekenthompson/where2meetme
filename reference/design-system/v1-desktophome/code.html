@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Where2Meet.Me | Equality in every mile.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#69ff87",
+                    "on-primary-fixed-variant": "#343d96",
+                    "on-surface": "#1a1c1d",
+                    "on-secondary-container": "#217128",
+                    "surface-variant": "#e2e2e4",
+                    "secondary-container": "#a0f399",
+                    "tertiary-container": "#003912",
+                    "secondary": "#1b6d24",
+                    "tertiary-fixed-dim": "#3ce36a",
+                    "primary": "#000666",
+                    "on-tertiary-fixed": "#002108",
+                    "inverse-surface": "#2f3132",
+                    "primary-fixed-dim": "#bdc2ff",
+                    "on-background": "#1a1c1d",
+                    "surface-container-high": "#e8e8ea",
+                    "outline-variant": "#c6c5d4",
+                    "surface-container-highest": "#e2e2e4",
+                    "on-primary-container": "#8690ee",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#00b048",
+                    "secondary-fixed": "#a3f69c",
+                    "on-primary-fixed": "#000767",
+                    "surface-dim": "#d9dadc",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed": "#002204",
+                    "on-secondary-fixed-variant": "#005312",
+                    "background": "#f9f9fb",
+                    "inverse-primary": "#bdc2ff",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#00531e",
+                    "inverse-on-surface": "#f0f0f2",
+                    "surface-container": "#eeeef0",
+                    "surface": "#f9f9fb",
+                    "surface-tint": "#4c56af",
+                    "primary-container": "#1a237e",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f9f9fb",
+                    "surface-container-low": "#f3f3f5",
+                    "error-container": "#ffdad6",
+                    "tertiary": "#002108",
+                    "secondary-fixed-dim": "#88d982",
+                    "on-surface-variant": "#454652",
+                    "primary-fixed": "#e0e0ff",
+                    "outline": "#767683"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .gradient-cta {
+            background: linear-gradient(135deg, #000666 0%, #1a237e 100%);
+        }
+        .glass-header {
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-fixed-dim selection:text-primary">
+<!-- TopNavBar Component -->
+<header class="w-full top-0 sticky z-50 bg-[#f9f9fb] dark:bg-slate-950 backdrop-blur-xl bg-opacity-80 shadow-[0_32px_64px_-15px_rgba(26,28,29,0.06)]">
+<div class="flex justify-between items-center px-12 py-4 max-w-screen-2xl mx-auto font-['Manrope'] tracking-tight">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-extrabold tracking-tighter text-[#1A237E] dark:text-blue-500">Where2Meet.Me</span>
+<nav class="hidden md:flex gap-8">
+<a class="text-slate-600 dark:text-slate-400 hover:text-[#1A237E] transition-colors" href="#">History</a>
+<a class="text-[#1A237E] dark:text-blue-400 font-bold border-b-2 border-[#1A237E] pb-1" href="#">Find Venues</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-[#1A237E] transition-colors" href="#">About</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-slate-600 hover:bg-slate-100 p-2 rounded-full transition-all duration-300">notifications</button>
+<button class="material-symbols-outlined text-slate-600 hover:bg-slate-100 p-2 rounded-full transition-all duration-300">help</button>
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional man with a friendly expression in a soft-lit modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVQUt7DZjc2r6apzTnQdKZjjZfRyG8_R1GymB1UL64T0yiHcfhN1iSKnDeTRmqdXlyQTQFMdTGypkqsWGnzfepQfuNOgE85JdjKKSTHLLGuvWnvBv4Md8EYgofGJYn-aO3lc_p83JGGMHEl8yrn3Pw9nJIgpr1jrEQ_ChLoPC1ie9FIOzOhr1g7wRnHSsduAo7VAb7V0r6Kh2fvgTPsD8G1iKth9guwC2unLpoB1Bt8YCE3zr_xnBulfUWXPfVTwy7OOa1whzbVaU"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-screen-2xl mx-auto px-12 pt-16 pb-24">
+<!-- Hero Section -->
+<section class="mb-20 text-center">
+<h1 class="font-headline text-[3.5rem] font-extrabold tracking-tight text-primary leading-tight mb-6">
+                Equality in every mile.
+            </h1>
+<p class="font-body text-xl text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
+                Experience the luxury of objective curation. Our algorithm ensures mathematical fairness for all travelers, pinpointing the perfect meeting spot where time and distance converge.
+            </p>
+</section>
+<!-- Planning Canvas -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Left Column: Inputs -->
+<div class="col-span-12 lg:col-span-8 space-y-8">
+<!-- Traveler Inputs Grid -->
+<div class="grid md:grid-cols-2 gap-6">
+<!-- Traveler Alpha -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_32px_64px_-15px_rgba(26,28,29,0.06)] flex flex-col space-y-6">
+<div class="flex items-center gap-3">
+<div class="w-2 h-8 bg-primary rounded-full"></div>
+<h2 class="font-headline text-xl font-bold">Traveler Alpha</h2>
+</div>
+<div class="space-y-4">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Starting Point</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-primary/10 transition-all font-body" placeholder="Enter origin address" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline">my_location</span>
+</div>
+</div>
+<div class="space-y-4">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Travel Mode</label>
+<div class="flex flex-wrap gap-2">
+<button class="bg-primary text-on-primary p-3 rounded-xl flex items-center justify-center w-12 h-12 transition-transform active:scale-95">
+<span class="material-symbols-outlined">directions_car</span>
+</button>
+<button class="bg-surface-container-high text-on-surface-variant p-3 rounded-xl flex items-center justify-center w-12 h-12 hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">directions_bus</span>
+</button>
+<button class="bg-surface-container-high text-on-surface-variant p-3 rounded-xl flex items-center justify-center w-12 h-12 hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">directions_walk</span>
+</button>
+<button class="bg-surface-container-high text-on-surface-variant p-3 rounded-xl flex items-center justify-center w-12 h-12 hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">directions_bike</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Traveler Beta -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_32px_64px_-15px_rgba(26,28,29,0.06)] flex flex-col space-y-6">
+<div class="flex items-center gap-3">
+<div class="w-2 h-8 bg-on-primary-container rounded-full"></div>
+<h2 class="font-headline text-xl font-bold">Traveler Beta</h2>
+</div>
+<div class="space-y-4">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Starting Point</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-primary/10 transition-all font-body" placeholder="Enter origin address" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline">my_location</span>
+</div>
+</div>
+<div class="space-y-4">
+<label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Travel Mode</label>
+<div class="flex flex-wrap gap-2">
+<button class="bg-surface-container-high text-on-surface-variant p-3 rounded-xl flex items-center justify-center w-12 h-12 hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">directions_car</span>
+</button>
+<button class="bg-surface-container-high text-on-surface-variant p-3 rounded-xl flex items-center justify-center w-12 h-12 hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">directions_bus</span>
+</button>
+<button class="bg-primary text-on-primary p-3 rounded-xl flex items-center justify-center w-12 h-12 transition-transform active:scale-95">
+<span class="material-symbols-outlined">directions_walk</span>
+</button>
+<button class="bg-surface-container-high text-on-surface-variant p-3 rounded-xl flex items-center justify-center w-12 h-12 hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">directions_bike</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Venue Selection -->
+<div class="bg-surface-container-low p-8 rounded-xl">
+<h3 class="font-headline text-sm font-extrabold uppercase tracking-widest text-on-surface-variant mb-6">Select Venue Type</h3>
+<div class="grid grid-cols-3 gap-4">
+<button class="bg-surface-container-lowest p-6 rounded-xl flex flex-col items-center gap-3 group hover:bg-primary hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">coffee</span>
+<span class="font-headline font-bold">Coffee</span>
+</button>
+<button class="bg-primary text-on-primary p-6 rounded-xl flex flex-col items-center gap-3 group transition-all duration-300">
+<span class="material-symbols-outlined text-3xl scale-110" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+<span class="font-headline font-bold">Dining</span>
+</button>
+<button class="bg-surface-container-lowest p-6 rounded-xl flex flex-col items-center gap-3 group hover:bg-primary hover:text-white transition-all duration-300">
+<span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform">local_bar</span>
+<span class="font-headline font-bold">Drinks</span>
+</button>
+</div>
+</div>
+<!-- Main Action -->
+<div class="flex justify-center pt-4">
+<button class="gradient-cta text-on-primary px-12 py-5 rounded-full font-headline font-extrabold text-lg flex items-center gap-3 shadow-xl hover:brightness-110 active:scale-[0.98] transition-all">
+<span>Find the Fair Midpoint</span>
+<span class="material-symbols-outlined">query_stats</span>
+</button>
+</div>
+</div>
+<!-- Right Column: Visual Anchor -->
+<div class="col-span-12 lg:col-span-4 flex flex-col">
+<div class="sticky top-28 space-y-8">
+<!-- Map Placeholder -->
+<div class="aspect-square bg-surface-container-high rounded-xl overflow-hidden relative group">
+<img class="w-full h-full object-cover" data-alt="Clean minimal digital map interface showing London street grid with subtle blue and grey aesthetic" data-location="London" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjm0MNsBOLo4EjMN2F4akeIzRCdmP8yeb0PdN1LQyd4fM9OCMbGMfU0b4FfhY1YEvVNw94fz2Ny2QbccCVMPH4HBqOtXgKltGGdkppq9Q_CchROdLdA-BJ4w78TdvKbLREjKCtglUc_guitqhfMg8G1pda0Z3YQN6NNJt2wmkDzsKpCfQ9FAhR2IPwmoQh5sosX3LGeJKY9eX7yu0mVTq6JD7irRdt0rzTEnbbtsfPzMhW_XV_xIlkNEGUXIPn5HWJozVUI7Erv0Q"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent flex items-end p-8">
+<div class="bg-surface-container-lowest/90 backdrop-blur-md p-4 rounded-xl w-full flex items-center justify-between">
+<div>
+<p class="text-xs font-bold uppercase text-on-surface-variant">Live Precision</p>
+<p class="font-headline font-bold">Calculating Trajectories...</p>
+</div>
+<div class="w-8 h-8 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+</div>
+</div>
+</div>
+<!-- Editorial Quote/Tip -->
+<div class="border-l-4 border-secondary p-6 bg-secondary-container/20 rounded-r-xl">
+<span class="material-symbols-outlined text-secondary mb-3">auto_awesome</span>
+<p class="italic text-on-secondary-container leading-relaxed font-body">
+                            "Mathematical fairness isn't just about distance—it's about respecting the value of everyone's time."
+                        </p>
+<p class="mt-4 text-xs font-bold tracking-widest uppercase text-secondary">The Objective Concierge</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Spots Section -->
+<section class="mt-32">
+<div class="flex justify-between items-end mb-10">
+<div>
+<h2 class="font-headline text-3xl font-extrabold tracking-tight mb-2">Recent Spots</h2>
+<p class="text-on-surface-variant">Explore past high-parity successes across your workspace.</p>
+</div>
+<button class="text-primary font-bold flex items-center gap-2 hover:gap-3 transition-all">
+                    View All History <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="grid md:grid-cols-3 gap-8">
+<!-- Recent Spot 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:translate-y-[-4px] transition-transform duration-300 group">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h3 class="font-headline font-bold text-xl mb-1">The Artisan Pour</h3>
+<p class="text-on-surface-variant text-sm">34 High Street, E1</p>
+</div>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant">
+<span>A: 18m</span>
+<span class="text-secondary">Parity: 98%</span>
+<span>B: 19m</span>
+</div>
+<!-- Parity Meter -->
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+<!-- Recent Spot 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:translate-y-[-4px] transition-transform duration-300">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h3 class="font-headline font-bold text-xl mb-1">Neapolitan Grid</h3>
+<p class="text-on-surface-variant text-sm">Westfield Ave, W12</p>
+</div>
+<span class="material-symbols-outlined text-outline">bookmark</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant">
+<span>A: 24m</span>
+<span class="text-secondary">Parity: 94%</span>
+<span>B: 26m</span>
+</div>
+<!-- Parity Meter -->
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 94%"></div>
+</div>
+</div>
+</div>
+<!-- Recent Spot 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:translate-y-[-4px] transition-transform duration-300">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h3 class="font-headline font-bold text-xl mb-1">Obsidian Lounge</h3>
+<p class="text-on-surface-variant text-sm">Shoreditch High St</p>
+</div>
+<span class="material-symbols-outlined text-outline">history</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant">
+<span>A: 12m</span>
+<span class="text-secondary">Parity: 100%</span>
+<span>B: 12m</span>
+</div>
+<!-- Parity Meter -->
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Component -->
+<footer class="w-full py-8 mt-auto bg-[#f3f3f5] dark:bg-slate-900 border-t border-[#c6c5d4]/15">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-screen-2xl mx-auto font-['Inter'] text-xs uppercase tracking-widest">
+<div class="text-slate-400 mb-4 md:mb-0">
+                © 2024 Where2Meet.Me. Editorial Precision in Travel.
+            </div>
+<div class="flex gap-8">
+<a class="text-slate-400 hover:text-[#1B6D24] transition-colors" href="#">Privacy Policy</a>
+<a class="text-slate-400 hover:text-[#1B6D24] transition-colors" href="#">Terms of Service</a>
+<a class="text-slate-400 hover:text-[#1B6D24] transition-colors" href="#">API Reference</a>
+<a class="text-slate-400 hover:text-[#1B6D24] transition-colors" href="#">Contact</a>
+</div>
+</div>
+</footer>
+</body></html>
