@@ -12,6 +12,7 @@ export default function HomePage() {
     participants,
     venueType,
     isSearching,
+    error,
     addParticipant,
     removeParticipant,
     updateParticipant,
@@ -129,9 +130,9 @@ export default function HomePage() {
           )}
         </button>
 
-        {useSearchStore.getState().error && (
+        {error && (
           <p className="text-sm text-parity-bad text-center mt-3 font-body">
-            {useSearchStore.getState().error}
+            {error}
           </p>
         )}
       </section>
