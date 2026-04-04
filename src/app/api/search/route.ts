@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { calculateFairMidpoint } from "@/lib/midpoint";
+import { supabaseServer } from "@/lib/supabase-server";
 import type { Participant, VenueType, VenueResult } from "@/lib/types";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_MAPS_API_KEY ?? "";
@@ -218,8 +219,10 @@ export async function POST(req: NextRequest) {
 
     const shortCode = nanoid(8);
 
+    const searchId = crypto.randomUUID();
+
     const result = {
-      id: crypto.randomUUID(),
+      id: searchId,
       shortCode,
       venueType,
       midpointLat: midpointResult.midpoint.lat,
@@ -232,7 +235,71 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    // TODO: Store in Supabase when configured
+    // Store in Supabase (gracefully handle failures)
+    try {
+      // Insert search record
+      const { error: searchError } = await supabaseServer
+        .from("searches")
+        .insert({
+          id: searchId,
+          short_code: shortCode,
+          venue_type: venueType,
+          status: "complete",
+          midpoint_lat: midpointResult.midpoint.lat,
+          midpoint_lng: midpointResult.midpoint.lng,
+        });
+
+      if (searchError) {
+        console.error("Failed to insert search:", searchError);
+      } else {
+        // Insert participants
+        const participantRows = result.participants.map((p) => ({
+          search_id: searchId,
+          label: p.label,
+          origin_place_id: p.originPlaceId,
+          origin_lat: p.originLat,
+          origin_lng: p.originLng,
+          origin_display_name: p.originDisplayName,
+          travel_mode: p.travelMode,
+          travel_time_seconds: p.travelTimeSeconds,
+        }));
+
+        const { error: participantsError } = await supabaseServer
+          .from("participants")
+          .insert(participantRows);
+
+        if (participantsError) {
+          console.error("Failed to insert participants:", participantsError);
+        }
+
+        // Insert venues
+        const venueRows = venues.map((v) => ({
+          search_id: searchId,
+          place_id: v.placeId,
+          name: v.name,
+          address: v.address,
+          short_address: v.shortAddress,
+          lat: v.lat,
+          lng: v.lng,
+          rating: v.rating,
+          user_ratings_total: v.userRatingsTotal,
+          photo_reference: v.photoReference,
+          fairness_score: v.fairnessScore,
+          travel_times: v.travelTimes,
+        }));
+
+        const { error: venuesError } = await supabaseServer
+          .from("venues")
+          .insert(venueRows);
+
+        if (venuesError) {
+          console.error("Failed to insert venues:", venuesError);
+        }
+      }
+    } catch (dbError) {
+      // DB is down or misconfigured — log but don't fail the request
+      console.error("Database error:", dbError);
+    }
 
     return NextResponse.json(result);
   } catch (err) {
