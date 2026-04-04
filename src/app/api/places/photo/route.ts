@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "ref required" }, { status: 400 });
   }
 
-  const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=600&photo_reference=${ref}&key=${GOOGLE_API_KEY}`;
+  const url = `https://places.googleapis.com/v1/${ref}/media?maxWidthPx=600&key=${GOOGLE_API_KEY}`;
 
   try {
     const res = await fetch(url, { redirect: "follow" });

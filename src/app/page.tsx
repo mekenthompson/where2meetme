@@ -12,6 +12,7 @@ export default function HomePage() {
     participants,
     venueType,
     isSearching,
+    error,
     addParticipant,
     removeParticipant,
     updateParticipant,
@@ -130,51 +131,12 @@ export default function HomePage() {
           )}
         </button>
 
-        {useSearchStore.getState().error && (
+        {error && (
           <p className="text-sm text-parity-bad text-center mt-3 font-body">
-            {useSearchStore.getState().error}
+            {error}
           </p>
         )}
       </section>
-
-      {/* Bottom Nav */}
-      <nav className="mt-auto sticky bottom-0 bg-surface-lowest/80 backdrop-blur-lg rounded-t-[24px]">
-        <div className="flex items-center justify-around py-2">
-          <NavItem icon="search" label="Search" active />
-          <NavItem icon="event_note" label="Plans" />
-          <NavItem icon="info" label="About" />
-        </div>
-      </nav>
     </div>
-  );
-}
-
-function NavItem({
-  icon,
-  label,
-  active = false,
-}: {
-  icon: string;
-  label: string;
-  active?: boolean;
-}) {
-  return (
-    <button
-      className={`flex flex-col items-center ${
-        active ? "" : "text-on-surface-variant"
-      }`}
-    >
-      {active ? (
-        <div className="bg-primary text-on-primary rounded-full px-6 py-2.5 flex flex-col items-center gap-0.5">
-          <Icon name={icon} size={24} filled={true} />
-          <span className="text-[10px] font-medium font-body">{label}</span>
-        </div>
-      ) : (
-        <>
-          <Icon name={icon} size={24} filled={false} />
-          <span className="text-[10px] font-medium font-body">{label}</span>
-        </>
-      )}
-    </button>
   );
 }
