@@ -92,7 +92,7 @@ export default function HomePage() {
       {/* Header */}
       <header className="flex items-center justify-between px-5 pt-4 pb-2">
         <h2 className="text-lg font-bold font-headline text-primary">
-          Where2Meet.Me
+          Where2Meet<span className="text-secondary">.Me</span>
         </h2>
         <button className="w-9 h-9 rounded-full bg-primary flex items-center justify-center">
           <Icon name="person" size={20} className="text-on-primary" />
@@ -110,9 +110,6 @@ export default function HomePage() {
           Drop your locations and find a great spot that's easy for everyone.
         </p>
       </section>
-
-      {/* Recent Spots */}
-      <RecentSpots />
 
       {/* Traveler Cards */}
       <section className="px-5 space-y-3">
@@ -140,18 +137,21 @@ export default function HomePage() {
 
       {/* Venue Type */}
       <section className="px-5 pt-6 space-y-2">
-        <h3 className="text-xs font-medium text-on-surface-variant uppercase tracking-wider font-body">
-          What are you looking for?
+        <h3 className="text-sm font-bold text-primary uppercase tracking-widest font-body">
+          Select Venue Type
         </h3>
         <VenueTypeSelector selected={venueType} onSelect={setVenueType} />
       </section>
+
+      {/* Recent Spots */}
+      <RecentSpots />
 
       {/* Search CTA */}
       <section className="px-5 pt-6 pb-8">
         <button
           onClick={handleSearch}
           disabled={!allLocationsSet || isSearching}
-          className="btn-primary w-full py-5 flex items-center justify-center gap-2 text-lg font-semibold font-headline disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full py-6 rounded-full bg-gradient-to-br from-primary to-primary-container text-white font-headline font-extrabold text-lg flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
           aria-label={isSearching ? "Finding great spots" : "Find a great spot"}
         >
           {isSearching ? (
@@ -162,7 +162,7 @@ export default function HomePage() {
           ) : (
             <>
               Find a Great Spot
-              <Icon name="arrow_forward" size={20} />
+              <Icon name="east" size={20} />
             </>
           )}
         </button>

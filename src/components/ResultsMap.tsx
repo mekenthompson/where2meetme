@@ -65,7 +65,7 @@ export function ResultsMap({
 
   if (!mapboxToken) {
     return (
-      <div className="h-64 bg-surface-low rounded-2xl flex items-center justify-center">
+      <div className="h-[300px] bg-surface-low rounded-2xl flex items-center justify-center">
         <div className="text-center space-y-2">
           <Icon name="map_off" size={40} className="text-on-surface-variant/30" />
           <p className="text-xs text-on-surface-variant">
@@ -78,7 +78,7 @@ export function ResultsMap({
 
   if (mapError) {
     return (
-      <div className="h-64 bg-surface-low rounded-2xl flex items-center justify-center">
+      <div className="h-[300px] bg-surface-low rounded-2xl flex items-center justify-center">
         <div className="text-center space-y-2">
           <Icon name="error" size={40} className="text-on-surface-variant/30" />
           <p className="text-xs text-on-surface-variant">Map failed to load</p>
@@ -88,7 +88,7 @@ export function ResultsMap({
   }
 
   return (
-    <div className="h-64 rounded-2xl overflow-hidden shadow-ambient">
+    <div className="h-[300px] rounded-2xl overflow-hidden shadow-ambient">
       <Map
         ref={mapRef}
         mapboxAccessToken={mapboxToken}
@@ -103,12 +103,12 @@ export function ResultsMap({
       >
         {/* Midpoint marker (pulsing green) */}
         <Marker latitude={midpointLat} longitude={midpointLng}>
-          <div className="relative">
-            <div className="w-5 h-5 bg-secondary rounded-full shadow-lg border-2 border-white animate-pulse" />
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
-              <span className="text-[10px] font-bold text-secondary bg-white/90 px-2 py-0.5 rounded-full shadow-sm">
-                Meeting area
-              </span>
+          <div className="flex flex-col items-center">
+            <div className="bg-secondary p-2 rounded-full shadow-[0_0_20px_rgba(27,109,36,0.4)] animate-pulse">
+              <Icon name="stars" size={20} filled className="text-white" />
+            </div>
+            <div className="mt-1 bg-secondary text-white px-3 py-0.5 rounded-full text-[10px] font-bold shadow-lg whitespace-nowrap">
+              FAIR MIDPOINT
             </div>
           </div>
         </Marker>

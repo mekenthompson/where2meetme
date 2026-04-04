@@ -40,7 +40,7 @@ export function VenueCardCompact({ venue, participants, onSelect }: VenueCardCom
   return (
     <button
       onClick={() => onSelect(venue)}
-      className="w-full text-left bg-surface-lowest rounded-3xl overflow-hidden shadow-ambient hover:shadow-lg transition-all active:scale-[0.98] grid grid-cols-[112px_1fr] h-28"
+      className="w-full text-left bg-surface-lowest rounded-[24px] overflow-hidden shadow-[0_4px_24px_rgba(0,6,102,0.04)] hover:shadow-lg transition-all active:scale-[0.98] grid grid-cols-[112px_1fr] h-48"
     >
       {venue.photoReference && (
         <div className="overflow-hidden">
@@ -58,6 +58,7 @@ export function VenueCardCompact({ venue, participants, onSelect }: VenueCardCom
             <h3 className="text-lg font-bold text-primary leading-tight font-headline">
               {venue.name}
             </h3>
+            <Icon name="favorite" size={18} className="text-on-surface-variant" />
           </div>
           {venue.rating && (
             <div className="flex items-center gap-1 mt-1">
@@ -73,14 +74,7 @@ export function VenueCardCompact({ venue, participants, onSelect }: VenueCardCom
         <div className="bg-surface-low p-2 rounded-xl flex items-center justify-between px-3">
           <div className="text-[10px] font-bold font-body">
             {travelTimes.map((t, i) => {
-              const pct = maxTime > 0 ? (t.seconds / maxTime) * 100 : 0;
-              const deltaMin = Math.abs(t.seconds - minTime) / 60;
-              const color =
-                deltaMin <= 5
-                  ? "text-parity-good"
-                  : deltaMin <= 10
-                    ? "text-parity-ok"
-                    : "text-parity-bad";
+              const color = i % 2 === 0 ? "text-primary" : "text-primary-container";
 
               return (
                 <div key={t.label} className={color}>
@@ -90,7 +84,7 @@ export function VenueCardCompact({ venue, participants, onSelect }: VenueCardCom
             })}
           </div>
           <div className={`flex items-center gap-1 bg-secondary/10 px-2 py-1 rounded-full ${matchColor}`}>
-            <Icon name="thumb_up" size={14} />
+            <Icon name="balance" size={14} />
             <span className="text-[10px] font-black">{matchText.toUpperCase()}</span>
           </div>
         </div>

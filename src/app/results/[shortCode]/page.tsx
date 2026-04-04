@@ -83,22 +83,41 @@ export default function ResultsPage() {
   return (
     <div className="flex flex-col min-h-dvh">
       {/* Header */}
-      <header className="flex items-center gap-3 px-5 pt-4 pb-2">
+      <header className="flex items-center justify-between px-5 pt-4 pb-2">
         <button
           onClick={() => router.push("/")}
           className="w-9 h-9 rounded-full bg-surface-low flex items-center justify-center"
         >
           <Icon name="arrow_back" size={20} />
         </button>
-        <div>
-          <h2 className="text-lg font-bold font-headline text-primary">
-            Where2Meet.Me
-          </h2>
+        <div className="bg-surface-low px-4 py-2 rounded-full flex items-center gap-2">
+          <Icon name="location_on" size={16} className="text-primary" />
+          <span className="text-sm font-semibold text-on-surface font-headline">
+            {result.participants.map(p => p.label).join(" • ")}
+          </span>
         </div>
+        <button
+          onClick={async () => {
+            const url = `${window.location.origin}/m/${result.shortCode}`;
+            if (navigator.share) {
+              await navigator.share({
+                title: "Where2Meet.Me — Great Spot for Everyone",
+                text: `Check out this great meeting spot for ${result.participants.length} people!`,
+                url,
+              });
+            } else {
+              await navigator.clipboard.writeText(url);
+              alert("Link copied to clipboard!");
+            }
+          }}
+          className="w-9 h-9 rounded-full bg-surface-low flex items-center justify-center"
+        >
+          <Icon name="lock" size={18} className="text-on-surface-variant" />
+        </button>
       </header>
 
       {/* Interactive map */}
-      <section className="mx-5">
+      <section className="w-full">
         <ResultsMap
           midpointLat={result.midpointLat}
           midpointLng={result.midpointLng}
@@ -109,7 +128,7 @@ export default function ResultsPage() {
 
       {/* Results header */}
       <section className="px-5 pt-5 pb-3">
-        <h1 className="text-2xl font-bold font-headline text-on-surface">
+        <h1 className="text-3xl font-extrabold tracking-tight font-headline text-primary">
           {venueTypeLabels[result.venueType] ?? "Places"} for your group
         </h1>
         <p className="text-sm text-on-surface-variant mt-1 font-body">

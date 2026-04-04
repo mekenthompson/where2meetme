@@ -114,16 +114,28 @@ body {
   }
 }
 
-/* Ambient shadow (tinted, not black) */
+/* Ambient shadow (navy-tinted for brand cohesion) */
 .shadow-ambient {
-  box-shadow: 0 4px 32px rgba(26, 28, 29, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 6, 102, 0.04);
+}
+
+/* Elevated shadow for prominent cards */
+.shadow-elevated {
+  box-shadow: 0 32px 64px -15px rgba(26, 28, 29, 0.06);
 }
 
 @media (prefers-color-scheme: dark) {
   .shadow-ambient {
-    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  }
+  .shadow-elevated {
+    box-shadow: 0 32px 64px -15px rgba(0, 0, 0, 0.4);
   }
 }
+
+/* Scrollbar-none utility */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Ghost border for accessibility */
 .ghost-border {

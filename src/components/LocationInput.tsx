@@ -143,6 +143,9 @@ export function LocationInput({
             <Icon name="close" size={18} />
           </button>
         )}
+        {!query && !isLoading && (
+          <Icon name="my_location" size={18} className="text-on-surface-variant/50" />
+        )}
       </div>
 
       {isOpen && suggestions.length > 0 && (

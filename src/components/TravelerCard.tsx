@@ -84,14 +84,10 @@ export function TravelerCard({
   };
 
   return (
-    <div className="bg-surface-lowest rounded-2xl p-5 shadow-ambient space-y-3">
+    <div className="bg-surface-lowest rounded-2xl p-6 shadow-ambient space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <span className="text-xs font-bold text-primary font-headline">
-              {participant.label.charAt(0).toUpperCase()}
-            </span>
-          </div>
+          <div className="w-1 h-6 bg-primary rounded-full" />
           {isEditingLabel ? (
             <input
               type="text"
@@ -100,26 +96,29 @@ export function TravelerCard({
               onBlur={handleLabelBlur}
               onKeyDown={(e) => e.key === "Enter" && handleLabelBlur()}
               autoFocus
-              className="text-xs uppercase tracking-widest font-semibold text-on-surface bg-transparent outline-none border-b border-primary/30 font-headline"
+              className="text-xs uppercase tracking-widest font-bold text-primary/60 bg-transparent outline-none border-b border-primary/30 font-headline"
             />
           ) : (
             <button
               onClick={() => setIsEditingLabel(true)}
-              className="text-xs uppercase tracking-widest font-semibold text-on-surface font-headline hover:text-primary transition-colors"
+              className="text-xs uppercase tracking-widest font-bold text-primary/60 font-headline hover:text-primary transition-colors"
             >
               {participant.label}
             </button>
           )}
         </div>
-        {canRemove && (
-          <button
-            onClick={() => onRemove(participant.id)}
-            className="text-on-surface-variant hover:text-on-surface transition-colors"
-            aria-label={`Remove traveler ${participant.label}`}
-          >
-            <Icon name="close" size={20} />
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {canRemove && (
+            <button
+              onClick={() => onRemove(participant.id)}
+              className="text-on-surface-variant hover:text-on-surface transition-colors"
+              aria-label={`Remove traveler ${participant.label}`}
+            >
+              <Icon name="close" size={18} />
+            </button>
+          )}
+          <Icon name="person" size={22} className="text-primary-container" />
+        </div>
       </div>
 
       <div className="space-y-1 relative">

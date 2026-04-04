@@ -30,7 +30,7 @@ export function VenueCardHero({ venue, participants, onSelect }: VenueCardHeroPr
   return (
     <button
       onClick={() => onSelect(venue)}
-      className="w-full text-left bg-surface-lowest rounded-3xl overflow-hidden shadow-ambient hover:shadow-lg transition-all active:scale-[0.98]"
+      className="w-full text-left bg-surface-lowest rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(0,6,102,0.04)] hover:shadow-lg transition-all active:scale-[0.98]"
     >
       {venue.photoReference && (
         <div className="relative h-56 overflow-hidden">
@@ -55,7 +55,7 @@ export function VenueCardHero({ venue, participants, onSelect }: VenueCardHeroPr
               {venue.name}
             </h3>
             <div className="flex flex-col items-end">
-              <span className={`text-lg font-bold ${matchColor}`}>
+              <span className="text-lg font-bold text-secondary">
                 {Math.round(venue.fairnessScore)}%
               </span>
               <span className="text-[10px] uppercase tracking-widest font-black text-secondary">

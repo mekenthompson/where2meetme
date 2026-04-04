@@ -54,14 +54,14 @@ export function RecentSpots() {
   return (
     <section className="px-5 pt-6 pb-2">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs font-medium text-on-surface-variant uppercase tracking-wider font-body">
-          Recent
+        <h3 className="text-sm font-bold text-primary uppercase tracking-widest font-body">
+          Recent Spots
         </h3>
         <button
           onClick={handleClear}
-          className="text-xs font-medium text-on-surface-variant hover:text-primary transition-colors font-body"
+          className="text-xs font-bold text-white bg-secondary px-3 py-1 rounded-full uppercase tracking-tighter"
         >
-          Clear
+          View All
         </button>
       </div>
 
@@ -70,7 +70,7 @@ export function RecentSpots() {
           <button
             key={spot.shortCode}
             onClick={() => handleSpotClick(spot.shortCode)}
-            className="flex flex-col items-start gap-2 px-4 py-3 rounded-2xl bg-surface-lowest hover:bg-surface-high transition-all shrink-0 min-w-[140px]"
+            className="flex flex-col items-start gap-3 p-4 rounded-2xl bg-surface-low hover:bg-surface-high transition-all shrink-0 min-w-[160px] border-b-2 border-primary"
           >
             <div className="flex items-center gap-2 w-full">
               <Icon
