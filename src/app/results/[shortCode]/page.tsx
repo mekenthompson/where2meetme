@@ -1,7 +1,8 @@
 "use client";
 
 import { useSearchStore } from "@/store/search";
-import { VenueCard } from "@/components/VenueCard";
+import { VenueCardHero } from "@/components/VenueCardHero";
+import { VenueCardCompact } from "@/components/VenueCardCompact";
 import { VenueDetail } from "@/components/VenueDetail";
 import { Icon } from "@/components/Icon";
 import { useRouter } from "next/navigation";
@@ -105,16 +106,27 @@ export default function ResultsPage() {
       </section>
 
       {/* Venue cards */}
-      <section className="px-5 pb-6 space-y-4">
-        {result.venues.map((venue, i) => (
-          <VenueCard
-            key={venue.placeId}
-            venue={venue}
-            participants={result.participants}
-            onSelect={setSelectedVenue}
-            rank={i + 1}
-          />
-        ))}
+      <section className="px-5 pb-6 space-y-6">
+        {result.venues.map((venue, i) => {
+          if (i === 0) {
+            return (
+              <VenueCardHero
+                key={venue.placeId}
+                venue={venue}
+                participants={result.participants}
+                onSelect={setSelectedVenue}
+              />
+            );
+          }
+          return (
+            <VenueCardCompact
+              key={venue.placeId}
+              venue={venue}
+              participants={result.participants}
+              onSelect={setSelectedVenue}
+            />
+          );
+        })}
       </section>
 
       {/* FABs */}
