@@ -75,12 +75,12 @@ export function TravelerCard({
               onBlur={handleLabelBlur}
               onKeyDown={(e) => e.key === "Enter" && handleLabelBlur()}
               autoFocus
-              className="text-sm font-semibold text-on-surface bg-transparent outline-none border-b border-primary/30 font-headline"
+              className="text-xs uppercase tracking-widest font-semibold text-on-surface bg-transparent outline-none border-b border-primary/30 font-headline"
             />
           ) : (
             <button
               onClick={() => setIsEditingLabel(true)}
-              className="text-sm font-semibold text-on-surface font-headline hover:text-primary transition-colors"
+              className="text-xs uppercase tracking-widest font-semibold text-on-surface font-headline hover:text-primary transition-colors"
             >
               {participant.label}
             </button>
@@ -96,8 +96,8 @@ export function TravelerCard({
         )}
       </div>
 
-      <div className="space-y-1">
-        <label className="text-xs font-medium text-on-surface-variant uppercase tracking-wider font-body">
+      <div className="space-y-1 relative">
+        <label className="text-[10px] font-medium text-on-surface-variant uppercase tracking-widest font-body">
           Origin
         </label>
         <LocationInput

@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { nanoid } from "nanoid";
-import type { Participant, TravelMode, VenueType, SearchResult } from "@/lib/types";
+import type { Participant, TravelMode, VenueType, SearchResult, SearchError } from "@/lib/types";
 
 function createParticipant(index: number): Participant {
   const labels = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta"];
@@ -23,7 +23,7 @@ interface SearchState {
   venueType: VenueType;
   isSearching: boolean;
   result: SearchResult | null;
-  error: string | null;
+  error: SearchError | null;
 
   setVenueType: (type: VenueType) => void;
   addParticipant: () => void;
@@ -32,7 +32,7 @@ interface SearchState {
   setTravelMode: (id: string, mode: TravelMode) => void;
   setSearching: (searching: boolean) => void;
   setResult: (result: SearchResult | null) => void;
-  setError: (error: string | null) => void;
+  setError: (error: SearchError | null) => void;
   reset: () => void;
   canSearch: () => boolean;
 }

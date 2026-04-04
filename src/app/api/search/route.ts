@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { calculateFairMidpoint } from "@/lib/midpoint";
-import type { Participant, VenueType, VenueResult } from "@/lib/types";
+import { supabaseServer } from "@/lib/supabase-server";
+import type { Participant, VenueType, VenueResult, SearchError } from "@/lib/types";
 import { LRUCache } from "@/lib/cache";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_MAPS_API_KEY ?? "";
@@ -15,16 +16,7 @@ const venueTypeToGoogleType: Record<VenueType, string> = {
   bar: "bar",
   park: "park",
   library: "library",
-  coworking: "cafe", // No direct Google type; search cafes with keyword
-};
-
-const venueTypeKeyword: Record<VenueType, string | undefined> = {
-  cafe: undefined,
-  restaurant: undefined,
-  bar: undefined,
-  park: undefined,
-  library: undefined,
-  coworking: "coworking",
+  coworking: "coworking_space",
 };
 
 async function searchNearbyVenues(
@@ -33,7 +25,7 @@ async function searchNearbyVenues(
   venueType: VenueType,
   radius = 3000,
   apiCallCounter?: { count: number }
-): Promise<VenueResult[]> {
+): Promise<VenueResult[] | { error: SearchError }> {
   // Create cache key: round lat/lng to 3 decimals (~100m precision)
   const roundedLat = Math.round(lat * 1000) / 1000;
   const roundedLng = Math.round(lng * 1000) / 1000;
@@ -46,49 +38,97 @@ async function searchNearbyVenues(
   }
 
   const type = venueTypeToGoogleType[venueType];
-  const keyword = venueTypeKeyword[venueType];
 
-  let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=${type}&key=${GOOGLE_API_KEY}`;
-  if (keyword) {
-    url += `&keyword=${encodeURIComponent(keyword)}`;
+  const url = "https://places.googleapis.com/v1/places:searchNearby";
+  const body = {
+    includedTypes: [type],
+    maxResultCount: 15,
+    locationRestriction: {
+      circle: {
+        center: { latitude: lat, longitude: lng },
+        radius: radius,
+      },
+    },
+  };
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": GOOGLE_API_KEY,
+      "X-Goog-FieldMask":
+        "places.id,places.displayName,places.formattedAddress,places.shortFormattedAddress,places.location,places.rating,places.userRatingCount,places.photos",
+    },
+    body: JSON.stringify(body),
+  });
+
+  try {
+    if (!res.ok) {
+      return {
+        error: {
+          type: "API_ERROR",
+          message: "Failed to reach mapping services",
+        },
+      };
+    }
+
+    const data = await res.json();
+    if (!data.places) {
+      return {
+        error: {
+          type: "API_ERROR",
+          message: "Failed to reach mapping services",
+        },
+      };
+    }
+
+    const venues = data.places.map(
+      (place: {
+        id: string;
+        displayName?: { text: string };
+        formattedAddress?: string;
+        shortFormattedAddress?: string;
+        location?: { latitude: number; longitude: number };
+        rating?: number;
+        userRatingCount?: number;
+        photos?: { name: string }[];
+      }): VenueResult => ({
+        placeId: place.id,
+        name: place.displayName?.text ?? "Unknown",
+        address: place.formattedAddress ?? place.shortFormattedAddress ?? "",
+        shortAddress: place.shortFormattedAddress ?? "",
+        lat: place.location?.latitude ?? lat,
+        lng: place.location?.longitude ?? lng,
+        rating: place.rating ?? null,
+        userRatingsTotal: place.userRatingCount ?? null,
+        photoReference: place.photos?.[0]?.name ?? null,
+        fairnessScore: 0, // Calculated later
+        travelTimes: {},
+      })
+    );
+
+    if (venues.length === 0) {
+      return {
+        error: {
+          type: "NO_VENUES",
+          message: "No venues found near the midpoint",
+        },
+      };
+    }
+
+    // Cache the results
+    if (apiCallCounter) apiCallCounter.count++;
+    venueCache.set(cacheKey, venues);
+
+    return venues;
+  } catch {
+    return {
+      error: {
+        type: "API_ERROR",
+        message: "Failed to reach mapping services",
+      },
+    };
   }
-
-  if (apiCallCounter) apiCallCounter.count++;
-  const res = await fetch(url);
-  if (!res.ok) return [];
-
-  const data = await res.json();
-  if (data.status !== "OK" || !data.results) return [];
-
-  const venues = data.results.slice(0, 15).map(
-    (place: {
-      place_id: string;
-      name: string;
-      vicinity: string;
-      formatted_address?: string;
-      geometry: { location: { lat: number; lng: number } };
-      rating?: number;
-      user_ratings_total?: number;
-      photos?: { photo_reference: string }[];
-    }): VenueResult => ({
-      placeId: place.place_id,
-      name: place.name,
-      address: place.formatted_address ?? place.vicinity,
-      shortAddress: place.vicinity,
-      lat: place.geometry.location.lat,
-      lng: place.geometry.location.lng,
-      rating: place.rating ?? null,
-      userRatingsTotal: place.user_ratings_total ?? null,
-      photoReference: place.photos?.[0]?.photo_reference ?? null,
-      fairnessScore: 0, // Calculated later
-      travelTimes: {},
-    })
-  );
-
-  // Cache the results
-  venueCache.set(cacheKey, venues);
-
-  return venues;
 }
 
 function haversineDistance(
@@ -169,7 +209,7 @@ export async function POST(req: NextRequest) {
     apiCallCounter.count += midpointResult.iterations;
 
     // Step 2: Search for venues near the midpoint
-    let venues = await searchNearbyVenues(
+    const venueSearchResult = await searchNearbyVenues(
       midpointResult.midpoint.lat,
       midpointResult.midpoint.lng,
       venueType,
@@ -177,9 +217,22 @@ export async function POST(req: NextRequest) {
       apiCallCounter
     );
 
+    // Handle venue search errors
+    if ("error" in venueSearchResult) {
+      const { error } = venueSearchResult;
+      if (error.type === "NO_VENUES") {
+        return NextResponse.json({ error }, { status: 200 });
+      } else {
+        return NextResponse.json({ error }, { status: 502 });
+      }
+    }
+
+    let venues = venueSearchResult;
+
     // Step 3: Calculate travel times from each participant to each venue
     // Skip distance matrix calls for venues < 500m from midpoint (use midpoint times)
     const MAPBOX_TOKEN = process.env.MAPBOX_SECRET_TOKEN ?? "";
+    let degraded = false;
 
     for (const venue of venues) {
       const venueTimes: Record<string, number> = {};
@@ -244,6 +297,7 @@ export async function POST(req: NextRequest) {
           }
         } catch {
           // Use midpoint travel times as fallback
+          degraded = true;
           for (const p of group) {
             if (midpointResult.travelTimes[p.id]) {
               venueTimes[p.id] = midpointResult.travelTimes[p.id];
@@ -272,6 +326,7 @@ export async function POST(req: NextRequest) {
             }
           }
         } catch {
+          degraded = true;
           for (const p of transitP) {
             if (midpointResult.travelTimes[p.id]) {
               venueTimes[p.id] = midpointResult.travelTimes[p.id];
@@ -290,8 +345,10 @@ export async function POST(req: NextRequest) {
 
     const shortCode = nanoid(8);
 
+    const searchId = crypto.randomUUID();
+
     const result = {
-      id: crypto.randomUUID(),
+      id: searchId,
       shortCode,
       venueType,
       midpointLat: midpointResult.midpoint.lat,
@@ -302,18 +359,88 @@ export async function POST(req: NextRequest) {
       })),
       venues,
       createdAt: new Date().toISOString(),
+      degraded: degraded || undefined,
     };
 
     // Log API call count for monitoring
     console.log(`[Search API] External API calls: ${apiCallCounter.count}`);
 
-    // TODO: Store in Supabase when configured
+    // Store in Supabase (gracefully handle failures)
+    try {
+      // Insert search record
+      const { error: searchError } = await supabaseServer
+        .from("searches")
+        .insert({
+          id: searchId,
+          short_code: shortCode,
+          venue_type: venueType,
+          status: "complete",
+          midpoint_lat: midpointResult.midpoint.lat,
+          midpoint_lng: midpointResult.midpoint.lng,
+        });
+
+      if (searchError) {
+        console.error("Failed to insert search:", searchError);
+      } else {
+        // Insert participants
+        const participantRows = result.participants.map((p) => ({
+          search_id: searchId,
+          label: p.label,
+          origin_place_id: p.originPlaceId,
+          origin_lat: p.originLat,
+          origin_lng: p.originLng,
+          origin_display_name: p.originDisplayName,
+          travel_mode: p.travelMode,
+          travel_time_seconds: p.travelTimeSeconds,
+        }));
+
+        const { error: participantsError } = await supabaseServer
+          .from("participants")
+          .insert(participantRows);
+
+        if (participantsError) {
+          console.error("Failed to insert participants:", participantsError);
+        }
+
+        // Insert venues
+        const venueRows = venues.map((v) => ({
+          search_id: searchId,
+          place_id: v.placeId,
+          name: v.name,
+          address: v.address,
+          short_address: v.shortAddress,
+          lat: v.lat,
+          lng: v.lng,
+          rating: v.rating,
+          user_ratings_total: v.userRatingsTotal,
+          photo_reference: v.photoReference,
+          fairness_score: v.fairnessScore,
+          travel_times: v.travelTimes,
+        }));
+
+        const { error: venuesError } = await supabaseServer
+          .from("venues")
+          .insert(venueRows);
+
+        if (venuesError) {
+          console.error("Failed to insert venues:", venuesError);
+        }
+      }
+    } catch (dbError) {
+      // DB is down or misconfigured — log but don't fail the request
+      console.error("Database error:", dbError);
+    }
 
     return NextResponse.json(result);
   } catch (err) {
     console.error("Search error:", err);
     return NextResponse.json(
-      { error: "Failed to calculate meeting point" },
+      {
+        error: {
+          type: "API_ERROR",
+          message: "Failed to calculate meeting point",
+        } as SearchError,
+      },
       { status: 500 }
     );
   }

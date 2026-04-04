@@ -1,10 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchStore } from "@/store/search";
 import { TravelerCard } from "@/components/TravelerCard";
 import { VenueTypeSelector } from "@/components/VenueTypeSelector";
+import { RecentSpots } from "@/components/RecentSpots";
 import { Icon } from "@/components/Icon";
+import { saveRecentSpot } from "@/lib/recent-spots";
+import type { SearchError } from "@/lib/types";
 
 export default function HomePage() {
   const router = useRouter();
@@ -12,6 +16,7 @@ export default function HomePage() {
     participants,
     venueType,
     isSearching,
+    error,
     addParticipant,
     removeParticipant,
     updateParticipant,
@@ -21,12 +26,14 @@ export default function HomePage() {
     setError,
     canSearch,
   } = useSearchStore();
+  const [degradedWarning, setDegradedWarning] = useState(false);
 
   const handleSearch = async () => {
     if (!canSearch()) return;
 
     setSearching(true);
     setError(null);
+    setDegradedWarning(false);
 
     try {
       const res = await fetch("/api/search", {
@@ -35,18 +42,44 @@ export default function HomePage() {
         body: JSON.stringify({ participants, venueType }),
       });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error ?? "Search failed");
+      const data = await res.json();
+
+      // Check for structured error in response
+      if (data.error) {
+        setError(data.error as SearchError);
+        return;
       }
 
-      const result = await res.json();
-      setResult(result);
-      router.push(`/results/${result.shortCode}`);
+      // Check for degraded flag (warning, not error)
+      if (data.degraded) {
+        setDegradedWarning(true);
+      }
+
+      setResult(data);
+      saveRecentSpot(data);
+      router.push(`/results/${data.shortCode}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError({
+        type: "API_ERROR",
+        message: "Something went wrong reaching our maps. Please try again.",
+      });
     } finally {
       setSearching(false);
+    }
+  };
+
+  const getErrorMessage = (error: SearchError): string => {
+    switch (error.type) {
+      case "NO_VENUES":
+        return `No ${venueType === "coworking" ? "coworking spaces" : venueType === "cafe" ? "cafes" : venueType === "restaurant" ? "restaurants" : venueType === "bar" ? "bars" : venueType === "park" ? "parks" : "libraries"} found near your midpoint. Try a different type or add more people.`;
+      case "API_ERROR":
+        return "Something went wrong reaching our maps. Please try again.";
+      case "RATE_LIMITED":
+        return "Too many searches — please wait a moment and try again.";
+      case "DEGRADED":
+        return "Results may be less accurate due to limited data availability.";
+      default:
+        return error.message;
     }
   };
 
@@ -68,14 +101,18 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="px-5 pt-4 pb-6">
-        <h1 className="text-4xl font-extrabold font-headline text-on-surface leading-tight tracking-tight">
+        <h1 className="text-[3.5rem] font-extrabold font-headline text-on-surface leading-[1.1] tracking-[-0.02em]">
           Equality in{" "}
-          <span className="text-primary italic">every mile.</span>
+          <span className="text-primary italic">every mile</span>
+          <span className="text-secondary">.Me</span>
         </h1>
         <p className="text-sm text-on-surface-variant mt-2 font-body leading-relaxed">
           Input your locations to find the mathematically perfect meeting spot.
         </p>
       </section>
+
+      {/* Recent Spots */}
+      <RecentSpots />
 
       {/* Traveler Cards */}
       <section className="px-5 space-y-3">
@@ -114,7 +151,7 @@ export default function HomePage() {
         <button
           onClick={handleSearch}
           disabled={!allLocationsSet || isSearching}
-          className="btn-primary w-full py-4 flex items-center justify-center gap-2 text-base font-semibold font-headline disabled:opacity-40 disabled:cursor-not-allowed"
+          className="btn-primary w-full py-5 flex items-center justify-center gap-2 text-lg font-semibold font-headline disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isSearching ? (
             <>
@@ -129,42 +166,23 @@ export default function HomePage() {
           )}
         </button>
 
-        {useSearchStore.getState().error && (
+        {error && (
           <p className="text-sm text-parity-bad text-center mt-3 font-body">
-            {useSearchStore.getState().error}
+            {getErrorMessage(error)}
           </p>
         )}
+
+        {degradedWarning && (
+          <div className="mt-3 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+            <div className="flex items-start gap-2">
+              <Icon name="warning" size={18} className="text-amber-600 mt-0.5" />
+              <p className="text-xs text-amber-700 font-body leading-relaxed">
+                Travel time estimates are approximate due to limited routing data. Results may be less accurate than usual.
+              </p>
+            </div>
+          </div>
+        )}
       </section>
-
-      {/* Bottom Nav */}
-      <nav className="mt-auto sticky bottom-0 bg-surface-lowest/80 backdrop-blur-lg border-t border-outline-variant/10">
-        <div className="flex items-center justify-around py-2">
-          <NavItem icon="search" label="Search" active />
-          <NavItem icon="event_note" label="Plans" />
-          <NavItem icon="info" label="About" />
-        </div>
-      </nav>
     </div>
-  );
-}
-
-function NavItem({
-  icon,
-  label,
-  active = false,
-}: {
-  icon: string;
-  label: string;
-  active?: boolean;
-}) {
-  return (
-    <button
-      className={`flex flex-col items-center gap-0.5 px-4 py-1 ${
-        active ? "text-primary" : "text-on-surface-variant"
-      }`}
-    >
-      <Icon name={icon} size={24} filled={active} />
-      <span className="text-[10px] font-medium font-body">{label}</span>
-    </button>
   );
 }

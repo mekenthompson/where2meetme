@@ -24,7 +24,7 @@ export function TravelModeChips({ selected, onSelect }: TravelModeChipsProps) {
           <button
             key={mode}
             onClick={() => onSelect(mode)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
               isSelected
                 ? "bg-primary text-on-primary"
                 : "bg-surface-high text-on-surface-variant hover:bg-surface-highest"
