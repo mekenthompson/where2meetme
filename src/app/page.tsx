@@ -71,7 +71,7 @@ export default function HomePage() {
   const getErrorMessage = (error: SearchError): string => {
     switch (error.type) {
       case "NO_VENUES":
-        return `No ${venueType === "coworking" ? "coworking spaces" : venueType === "cafe" ? "cafes" : venueType === "restaurant" ? "restaurants" : venueType === "bar" ? "bars" : venueType === "park" ? "parks" : "libraries"} found near your midpoint. Try a different type or add more people.`;
+        return `No ${venueType === "coworking" ? "coworking spaces" : venueType === "cafe" ? "cafes" : venueType === "restaurant" ? "restaurants" : venueType === "bar" ? "bars" : venueType === "park" ? "parks" : "libraries"} found near your group. Try a different type or add more people.`;
       case "API_ERROR":
         return "Something went wrong reaching our maps. Please try again.";
       case "RATE_LIMITED":
@@ -102,12 +102,12 @@ export default function HomePage() {
       {/* Hero */}
       <section className="px-5 pt-4 pb-6">
         <h1 className="text-[3.5rem] font-extrabold font-headline text-on-surface leading-[1.1] tracking-[-0.02em]">
-          Equality in{" "}
-          <span className="text-primary italic">every mile</span>
+          Meet in the{" "}
+          <span className="text-primary italic">middle</span>
           <span className="text-secondary">.Me</span>
         </h1>
         <p className="text-sm text-on-surface-variant mt-2 font-body leading-relaxed">
-          Input your locations to find the mathematically perfect meeting spot.
+          Drop your locations and find a great spot that's easy for everyone.
         </p>
       </section>
 
@@ -141,7 +141,7 @@ export default function HomePage() {
       {/* Venue Type */}
       <section className="px-5 pt-6 space-y-2">
         <h3 className="text-xs font-medium text-on-surface-variant uppercase tracking-wider font-body">
-          Select Venue Type
+          What are you looking for?
         </h3>
         <VenueTypeSelector selected={venueType} onSelect={setVenueType} />
       </section>
@@ -152,16 +152,16 @@ export default function HomePage() {
           onClick={handleSearch}
           disabled={!allLocationsSet || isSearching}
           className="btn-primary w-full py-5 flex items-center justify-center gap-2 text-lg font-semibold font-headline disabled:opacity-40 disabled:cursor-not-allowed"
-          aria-label={isSearching ? "Searching for fair midpoint" : "Find the fair midpoint"}
+          aria-label={isSearching ? "Finding great spots" : "Find a great spot"}
         >
           {isSearching ? (
             <>
               <Icon name="progress_activity" size={20} className="animate-spin" />
-              Finding fair midpoint...
+              Finding great spots...
             </>
           ) : (
             <>
-              Find the Fair Midpoint
+              Find a Great Spot
               <Icon name="arrow_forward" size={20} />
             </>
           )}

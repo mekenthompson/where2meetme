@@ -110,10 +110,10 @@ export default function ResultsPage() {
       {/* Results header */}
       <section className="px-5 pt-5 pb-3">
         <h1 className="text-2xl font-bold font-headline text-on-surface">
-          {venueTypeLabels[result.venueType] ?? "Places"} near the midpoint
+          {venueTypeLabels[result.venueType] ?? "Places"} for your group
         </h1>
         <p className="text-sm text-on-surface-variant mt-1 font-body">
-          Balanced for {result.participants.length} travelers &middot;{" "}
+          Easy for {result.participants.length} people &middot;{" "}
           {result.venues.length} venues found
         </p>
       </section>
@@ -154,8 +154,8 @@ export default function ResultsPage() {
             const url = `${window.location.origin}/m/${result.shortCode}`;
             if (navigator.share) {
               await navigator.share({
-                title: "Where2Meet.Me — Fair Meeting Point",
-                text: `Check out this fair meeting spot for ${result.participants.length} people!`,
+                title: "Where2Meet.Me — Great Spot for Everyone",
+                text: `Check out this great meeting spot for ${result.participants.length} people!`,
                 url,
               });
             } else {

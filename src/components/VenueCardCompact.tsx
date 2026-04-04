@@ -9,11 +9,11 @@ interface VenueCardCompactProps {
   onSelect: (venue: VenueResult) => void;
 }
 
-function getFairnessLabel(score: number): { text: string; color: string } {
+function getMatchLabel(score: number): { text: string; color: string } {
   if (score >= 95) return { text: "Perfect", color: "text-parity-good" };
   if (score >= 85) return { text: "Great", color: "text-parity-good" };
   if (score >= 70) return { text: "Good", color: "text-parity-ok" };
-  return { text: "Fair", color: "text-parity-ok" };
+  return { text: "Decent", color: "text-parity-ok" };
 }
 
 function formatTime(seconds: number): string {
@@ -25,7 +25,7 @@ function formatTime(seconds: number): string {
 }
 
 export function VenueCardCompact({ venue, participants, onSelect }: VenueCardCompactProps) {
-  const { text: fairnessText, color: fairnessColor } = getFairnessLabel(venue.fairnessScore);
+  const { text: matchText, color: matchColor } = getMatchLabel(venue.fairnessScore);
 
   const travelTimes = participants
     .filter((p) => venue.travelTimes[p.id] != null)
@@ -89,9 +89,9 @@ export function VenueCardCompact({ venue, participants, onSelect }: VenueCardCom
               );
             })}
           </div>
-          <div className={`flex items-center gap-1 bg-secondary/10 px-2 py-1 rounded-full ${fairnessColor}`}>
-            <Icon name="balance" size={14} />
-            <span className="text-[10px] font-black">{fairnessText.toUpperCase()}</span>
+          <div className={`flex items-center gap-1 bg-secondary/10 px-2 py-1 rounded-full ${matchColor}`}>
+            <Icon name="thumb_up" size={14} />
+            <span className="text-[10px] font-black">{matchText.toUpperCase()}</span>
           </div>
         </div>
       </div>

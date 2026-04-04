@@ -10,15 +10,15 @@ interface VenueCardHeroProps {
   onSelect: (venue: VenueResult) => void;
 }
 
-function getFairnessLabel(score: number): { text: string; color: string } {
-  if (score >= 95) return { text: "Optimal", color: "text-parity-good" };
-  if (score >= 85) return { text: "Great", color: "text-parity-good" };
-  if (score >= 70) return { text: "Good", color: "text-parity-ok" };
-  return { text: "Fair", color: "text-parity-ok" };
+function getMatchLabel(score: number): { text: string; color: string } {
+  if (score >= 95) return { text: "Perfect for everyone", color: "text-parity-good" };
+  if (score >= 85) return { text: "Great for everyone", color: "text-parity-good" };
+  if (score >= 70) return { text: "Good for everyone", color: "text-parity-ok" };
+  return { text: "Decent pick", color: "text-parity-ok" };
 }
 
 export function VenueCardHero({ venue, participants, onSelect }: VenueCardHeroProps) {
-  const { text: fairnessText, color: fairnessColor } = getFairnessLabel(venue.fairnessScore);
+  const { text: matchText, color: matchColor } = getMatchLabel(venue.fairnessScore);
 
   const travelTimes = participants
     .filter((p) => venue.travelTimes[p.id] != null)
@@ -55,11 +55,11 @@ export function VenueCardHero({ venue, participants, onSelect }: VenueCardHeroPr
               {venue.name}
             </h3>
             <div className="flex flex-col items-end">
-              <span className={`text-lg font-bold ${fairnessColor}`}>
-                {Math.round(venue.fairnessScore)}% Match
+              <span className={`text-lg font-bold ${matchColor}`}>
+                {Math.round(venue.fairnessScore)}%
               </span>
               <span className="text-[10px] uppercase tracking-widest font-black text-secondary">
-                {fairnessText}
+                {matchText}
               </span>
             </div>
           </div>
@@ -82,8 +82,8 @@ export function VenueCardHero({ venue, participants, onSelect }: VenueCardHeroPr
                 const minTime = Math.min(...times);
                 const diffMin = Math.round((maxTime - minTime) / 60);
                 return diffMin <= 2
-                  ? `Only ${diffMin} minute difference`
-                  : `${diffMin} minute difference`;
+                  ? `Only ${diffMin} min apart`
+                  : `${diffMin} min apart`;
               })()}
             </div>
           )}

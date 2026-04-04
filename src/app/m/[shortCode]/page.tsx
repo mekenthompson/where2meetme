@@ -24,8 +24,8 @@ export async function generateMetadata({
 
     if (!search) {
       return {
-        title: "Where2Meet.Me — Fair Meeting Point",
-        description: "Find fair meeting spots for your group.",
+        title: "Where2Meet.Me — Great Spots for Your Group",
+        description: "Find great meeting spots that are easy for everyone to get to.",
       };
     }
 
@@ -43,11 +43,11 @@ export async function generateMetadata({
     const participantCount = participantsResult.rows?.length ?? 0;
     const title = topVenue
       ? `Meet at ${topVenue.name} — Where2Meet.Me`
-      : "Where2Meet.Me — Fair Meeting Point";
+      : "Where2Meet.Me — Great Spots for Your Group";
 
     const description = topVenue
-      ? `${Math.round(topVenue.fairness_score)}% fair for ${participantCount} ${participantCount === 1 ? "person" : "people"}. Balanced travel times for everyone.`
-      : "A fair meeting spot calculated for your group.";
+      ? `A great spot for ${participantCount} ${participantCount === 1 ? "person" : "people"} — easy for everyone to get to.`
+      : "A great meeting spot picked for your group.";
 
     const ogImage = topVenue?.photo_reference
       ? `${process.env.NEXT_PUBLIC_BASE_URL || "https://where2meet.me"}/api/places/photo?ref=${encodeURIComponent(topVenue.photo_reference)}`
@@ -66,8 +66,8 @@ export async function generateMetadata({
     };
   } catch {
     return {
-      title: "Where2Meet.Me — Fair Meeting Point",
-      description: "Find fair meeting spots for your group.",
+      title: "Where2Meet.Me — Great Spots for Your Group",
+      description: "Find great meeting spots that are easy for everyone to get to.",
     };
   }
 }
@@ -136,7 +136,7 @@ export default async function SharedResultPage({ params }: SharedPageProps) {
           </div>
           <div>
             <h1 className="text-lg font-bold font-headline text-on-surface">
-              Fair Meeting Point
+              Your Meeting Spot
             </h1>
             <p className="text-xs text-on-surface-variant font-body">
               {participants.length} {participants.length === 1 ? "person" : "people"} · {search.venue_type}
@@ -158,7 +158,7 @@ export default async function SharedResultPage({ params }: SharedPageProps) {
           href="/"
           className="btn-primary w-full py-4 flex items-center justify-center gap-2 text-base font-semibold font-headline"
         >
-          Find your own fair midpoint
+          Find a spot for your group
           <Icon name="arrow_forward" size={20} />
         </a>
       </section>

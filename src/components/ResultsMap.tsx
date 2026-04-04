@@ -107,7 +107,7 @@ export function ResultsMap({
             <div className="w-5 h-5 bg-secondary rounded-full shadow-lg border-2 border-white animate-pulse" />
             <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
               <span className="text-[10px] font-bold text-secondary bg-white/90 px-2 py-0.5 rounded-full shadow-sm">
-                Midpoint
+                Meeting area
               </span>
             </div>
           </div>

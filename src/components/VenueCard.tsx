@@ -11,15 +11,15 @@ interface VenueCardProps {
   rank: number;
 }
 
-function getFairnessLabel(score: number): { text: string; color: string } {
+function getMatchLabel(score: number): { text: string; color: string } {
   if (score >= 95) return { text: "Perfect", color: "text-parity-good" };
   if (score >= 85) return { text: "Great", color: "text-parity-good" };
   if (score >= 70) return { text: "Good", color: "text-parity-ok" };
-  return { text: "Fair", color: "text-parity-ok" };
+  return { text: "Decent", color: "text-parity-ok" };
 }
 
 export function VenueCard({ venue, participants, onSelect, rank }: VenueCardProps) {
-  const { text: fairnessText, color: fairnessColor } = getFairnessLabel(venue.fairnessScore);
+  const { text: matchText, color: matchColor } = getMatchLabel(venue.fairnessScore);
 
   const travelTimes = participants
     .filter((p) => venue.travelTimes[p.id] != null)
@@ -32,7 +32,7 @@ export function VenueCard({ venue, participants, onSelect, rank }: VenueCardProp
     <button
       onClick={() => onSelect(venue)}
       className="w-full text-left bg-surface-lowest rounded-2xl overflow-hidden shadow-ambient hover:shadow-lg transition-all active:scale-[0.98]"
-      aria-label={`View details for ${venue.name}, ${Math.round(venue.fairnessScore)}% fair`}
+      aria-label={`View details for ${venue.name}, ${Math.round(venue.fairnessScore)}% match`}
     >
       {venue.photoReference && (
         <div className="relative h-40 overflow-hidden">
@@ -42,7 +42,7 @@ export function VenueCard({ venue, participants, onSelect, rank }: VenueCardProp
             className="w-full h-full object-cover"
           />
           <div className="absolute top-3 right-3 bg-surface-lowest/90 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1">
-            <span className={`text-sm font-bold font-headline ${fairnessColor}`}>
+            <span className={`text-sm font-bold font-headline ${matchColor}`}>
               {Math.round(venue.fairnessScore)}%
             </span>
             <span className="text-xs text-on-surface-variant">Match</span>
@@ -61,8 +61,8 @@ export function VenueCard({ venue, participants, onSelect, rank }: VenueCardProp
             <h3 className="text-base font-semibold text-on-surface font-headline leading-tight">
               {venue.name}
             </h3>
-            <span className={`text-xs font-semibold whitespace-nowrap ${fairnessColor}`}>
-              {fairnessText}
+            <span className={`text-xs font-semibold whitespace-nowrap ${matchColor}`}>
+              {matchText}
             </span>
           </div>
           <p className="text-xs text-on-surface-variant mt-0.5">{venue.shortAddress}</p>

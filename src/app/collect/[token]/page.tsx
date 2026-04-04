@@ -129,8 +129,8 @@ export default function CollectPage() {
               Share Your Location
             </h1>
             <p className="text-sm text-on-surface-variant font-body">
-              Help find the fairest meeting spot by sharing where you'll be
-              traveling from.
+              Share where you're coming from so we can find a great spot
+              that's easy for everyone.
             </p>
           </div>
 

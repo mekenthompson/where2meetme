@@ -17,13 +17,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Where2Meet.Me — Find Your Fair Midpoint",
+  title: "Where2Meet.Me — Find Great Spots to Meet Your People",
   description:
-    "Find the perfectly fair meeting point for 2-6 people based on real travel times. No more arguing about where to meet.",
+    "Find great meeting spots for 2-6 people based on real travel times. Easy for everyone to get to.",
   openGraph: {
-    title: "Where2Meet.Me — Find Your Fair Midpoint",
+    title: "Where2Meet.Me — Find Great Spots to Meet Your People",
     description:
-      "Find the perfectly fair meeting point based on real travel times.",
+      "Find great meeting spots that are easy for everyone to get to. Real travel times, real places.",
     type: "website",
   },
 };

@@ -35,7 +35,7 @@ export function VenueDetail({
 
   const handleShare = async () => {
     const url = `${window.location.origin}/m/${shortCode}`;
-    const text = `Let's meet at ${venue.name} — it's fair for everyone! ${url}`;
+    const text = `Let's meet at ${venue.name} — it's easy for everyone to get to! ${url}`;
 
     if (navigator.share) {
       await navigator.share({
@@ -78,12 +78,12 @@ export function VenueDetail({
           <Icon name="arrow_back" size={20} />
         </button>
 
-        {/* Fairness badge */}
+        {/* Match badge */}
         <div className="absolute top-4 right-4 bg-surface-lowest/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5">
           <span className="text-sm font-bold text-secondary font-headline">
             {Math.round(venue.fairnessScore)}%
           </span>
-          <span className="text-xs text-on-surface-variant">Fair</span>
+          <span className="text-xs text-on-surface-variant">Match</span>
         </div>
       </div>
 
@@ -132,12 +132,12 @@ export function VenueDetail({
         )}
       </section>
 
-      {/* Travel Parity Card */}
+      {/* Travel times Card */}
       <section className="mx-5 mt-5 bg-surface-lowest rounded-2xl p-5 shadow-ambient space-y-3">
         <div className="flex items-center gap-2">
-          <Icon name="balance" size={20} className="text-secondary" />
+          <Icon name="schedule" size={20} className="text-secondary" />
           <h3 className="text-sm font-semibold font-headline text-on-surface">
-            Travel Parity
+            Travel times
           </h3>
         </div>
         <ParityMeter travelTimes={travelTimes} />

@@ -1,7 +1,7 @@
 {
   "name": "Where2Meet.Me",
   "short_name": "W2M",
-  "description": "Find the perfectly fair meeting point for 2-6 people based on real travel times",
+  "description": "Find great meeting spots for 2-6 people based on real travel times",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#000666",
