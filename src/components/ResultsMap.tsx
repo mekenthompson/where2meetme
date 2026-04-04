@@ -108,7 +108,7 @@ export function ResultsMap({
               <Icon name="stars" size={20} filled className="text-white" />
             </div>
             <div className="mt-1 bg-secondary text-white px-3 py-0.5 rounded-full text-[10px] font-bold shadow-lg whitespace-nowrap">
-              FAIR MIDPOINT
+              MEETING AREA
             </div>
           </div>
         </Marker>

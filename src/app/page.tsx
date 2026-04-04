@@ -102,12 +102,13 @@ export default function HomePage() {
       {/* Hero */}
       <section className="px-5 pt-4 pb-6">
         <h1 className="text-[3.5rem] font-extrabold font-headline text-on-surface leading-[1.1] tracking-[-0.02em]">
-          Meet in the{" "}
-          <span className="text-primary italic">middle</span>
+          Where
+          <span className="text-primary">2</span>
+          Meet
           <span className="text-secondary">.Me</span>
         </h1>
         <p className="text-sm text-on-surface-variant mt-2 font-body leading-relaxed">
-          Drop your locations and find a great spot that's easy for everyone.
+          Find a great spot that's easy for everyone to get to.
         </p>
       </section>
 

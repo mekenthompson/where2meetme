@@ -70,7 +70,7 @@ export function TravelerCard({
       if (navigator.share) {
         await navigator.share({
           title: "Where2Meet.Me — Share Your Location",
-          text: `Help us find the fairest meeting spot! Share your location:`,
+          text: `Help us find a great spot to meet! Share your location:`,
           url: inviteUrl,
         });
       } else {
