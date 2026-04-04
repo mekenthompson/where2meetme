@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Map, { Marker, type MapRef } from "react-map-gl";
+import Map, { Marker, type MapRef } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 import type { Participant } from "@/lib/types";
 import { Icon } from "./Icon";
