@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { calculateFairMidpoint } from "@/lib/midpoint";
 import type { Participant, VenueType, VenueResult } from "@/lib/types";
+import { LRUCache } from "@/lib/cache";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_MAPS_API_KEY ?? "";
+
+// Cache for venue search results (5 min TTL, 100 entries max)
+const venueCache = new LRUCache<VenueResult[]>(100, 5 * 60 * 1000);
 
 const venueTypeToGoogleType: Record<VenueType, string> = {
   cafe: "cafe",
@@ -27,8 +31,20 @@ async function searchNearbyVenues(
   lat: number,
   lng: number,
   venueType: VenueType,
-  radius = 3000
+  radius = 3000,
+  apiCallCounter?: { count: number }
 ): Promise<VenueResult[]> {
+  // Create cache key: round lat/lng to 3 decimals (~100m precision)
+  const roundedLat = Math.round(lat * 1000) / 1000;
+  const roundedLng = Math.round(lng * 1000) / 1000;
+  const cacheKey = `venues:${roundedLat},${roundedLng}:${venueType}:${radius}`;
+
+  // Check cache first
+  const cached = venueCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const type = venueTypeToGoogleType[venueType];
   const keyword = venueTypeKeyword[venueType];
 
@@ -37,13 +53,14 @@ async function searchNearbyVenues(
     url += `&keyword=${encodeURIComponent(keyword)}`;
   }
 
+  if (apiCallCounter) apiCallCounter.count++;
   const res = await fetch(url);
   if (!res.ok) return [];
 
   const data = await res.json();
   if (data.status !== "OK" || !data.results) return [];
 
-  return data.results.slice(0, 15).map(
+  const venues = data.results.slice(0, 15).map(
     (place: {
       place_id: string;
       name: string;
@@ -67,6 +84,31 @@ async function searchNearbyVenues(
       travelTimes: {},
     })
   );
+
+  // Cache the results
+  venueCache.set(cacheKey, venues);
+
+  return venues;
+}
+
+function haversineDistance(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number {
+  const R = 6371000; // Earth radius in meters
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const sinLat = Math.sin(dLat / 2);
+  const sinLng = Math.sin(dLng / 2);
+  const h =
+    sinLat * sinLat +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      sinLng *
+      sinLng;
+  return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 
 function calculateFairnessScore(travelTimes: Record<string, number>): number {
@@ -84,6 +126,9 @@ function calculateFairnessScore(travelTimes: Record<string, number>): number {
 
 export async function POST(req: NextRequest) {
   try {
+    // API call counter for monitoring
+    const apiCallCounter = { count: 0 };
+
     const body = await req.json();
     const {
       participants,
@@ -119,20 +164,45 @@ export async function POST(req: NextRequest) {
       }))
     );
 
+    // Count midpoint calculation API calls
+    // Each iteration calls getTravelTimes which may batch API calls by mode
+    apiCallCounter.count += midpointResult.iterations;
+
     // Step 2: Search for venues near the midpoint
     let venues = await searchNearbyVenues(
       midpointResult.midpoint.lat,
       midpointResult.midpoint.lng,
-      venueType
+      venueType,
+      3000,
+      apiCallCounter
     );
 
     // Step 3: Calculate travel times from each participant to each venue
-    // (We reuse the midpoint travel times for venues very close to the midpoint,
-    //  and calculate new ones for venues further away)
+    // Skip distance matrix calls for venues < 500m from midpoint (use midpoint times)
     const MAPBOX_TOKEN = process.env.MAPBOX_SECRET_TOKEN ?? "";
 
     for (const venue of venues) {
       const venueTimes: Record<string, number> = {};
+
+      // Check if venue is very close to midpoint (< 500m)
+      const distanceToMidpoint = haversineDistance(
+        midpointResult.midpoint.lat,
+        midpointResult.midpoint.lng,
+        venue.lat,
+        venue.lng
+      );
+
+      // If venue is within 500m of midpoint, reuse midpoint travel times
+      if (distanceToMidpoint < 500) {
+        for (const p of validParticipants) {
+          if (midpointResult.travelTimes[p.id]) {
+            venueTimes[p.id] = midpointResult.travelTimes[p.id];
+          }
+        }
+        venue.travelTimes = venueTimes;
+        venue.fairnessScore = calculateFairnessScore(venueTimes);
+        continue;
+      }
 
       // Group by transit vs non-transit
       const transitP = validParticipants.filter((p) => p.travelMode === "transit");
@@ -161,6 +231,7 @@ export async function POST(req: NextRequest) {
 
         try {
           const url = `https://api.mapbox.com/directions-matrix/v1/${profile}/${coords}?sources=${sources}&destinations=${destinations}&annotations=duration&access_token=${MAPBOX_TOKEN}`;
+          apiCallCounter.count++;
           const res = await fetch(url);
           if (res.ok) {
             const data = await res.json();
@@ -187,6 +258,7 @@ export async function POST(req: NextRequest) {
         const dest = `${venue.lat},${venue.lng}`;
         try {
           const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origins}&destinations=${dest}&mode=transit&key=${GOOGLE_API_KEY}`;
+          apiCallCounter.count++;
           const res = await fetch(url);
           if (res.ok) {
             const data = await res.json();
@@ -231,6 +303,9 @@ export async function POST(req: NextRequest) {
       venues,
       createdAt: new Date().toISOString(),
     };
+
+    // Log API call count for monitoring
+    console.log(`[Search API] External API calls: ${apiCallCounter.count}`);
 
     // TODO: Store in Supabase when configured
 
