@@ -68,9 +68,10 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="px-5 pt-4 pb-6">
-        <h1 className="text-4xl font-extrabold font-headline text-on-surface leading-tight tracking-tight">
+        <h1 className="text-[3.5rem] font-extrabold font-headline text-on-surface leading-[1.1] tracking-[-0.02em]">
           Equality in{" "}
-          <span className="text-primary italic">every mile.</span>
+          <span className="text-primary italic">every mile</span>
+          <span className="text-secondary">.Me</span>
         </h1>
         <p className="text-sm text-on-surface-variant mt-2 font-body leading-relaxed">
           Input your locations to find the mathematically perfect meeting spot.
@@ -114,7 +115,7 @@ export default function HomePage() {
         <button
           onClick={handleSearch}
           disabled={!allLocationsSet || isSearching}
-          className="btn-primary w-full py-4 flex items-center justify-center gap-2 text-base font-semibold font-headline disabled:opacity-40 disabled:cursor-not-allowed"
+          className="btn-primary w-full py-5 flex items-center justify-center gap-2 text-lg font-semibold font-headline disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isSearching ? (
             <>
@@ -137,7 +138,7 @@ export default function HomePage() {
       </section>
 
       {/* Bottom Nav */}
-      <nav className="mt-auto sticky bottom-0 bg-surface-lowest/80 backdrop-blur-lg border-t border-outline-variant/10">
+      <nav className="mt-auto sticky bottom-0 bg-surface-lowest/80 backdrop-blur-lg rounded-t-[24px]">
         <div className="flex items-center justify-around py-2">
           <NavItem icon="search" label="Search" active />
           <NavItem icon="event_note" label="Plans" />
@@ -159,12 +160,21 @@ function NavItem({
 }) {
   return (
     <button
-      className={`flex flex-col items-center gap-0.5 px-4 py-1 ${
-        active ? "text-primary" : "text-on-surface-variant"
+      className={`flex flex-col items-center ${
+        active ? "" : "text-on-surface-variant"
       }`}
     >
-      <Icon name={icon} size={24} filled={active} />
-      <span className="text-[10px] font-medium font-body">{label}</span>
+      {active ? (
+        <div className="bg-primary text-on-primary rounded-full px-6 py-2.5 flex flex-col items-center gap-0.5">
+          <Icon name={icon} size={24} filled={true} />
+          <span className="text-[10px] font-medium font-body">{label}</span>
+        </div>
+      ) : (
+        <>
+          <Icon name={icon} size={24} filled={false} />
+          <span className="text-[10px] font-medium font-body">{label}</span>
+        </>
+      )}
     </button>
   );
 }

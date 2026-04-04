@@ -26,9 +26,9 @@ export function VenueTypeSelector({ selected, onSelect }: VenueTypeSelectorProps
           <button
             key={type}
             onClick={() => onSelect(type)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
+            className={`flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0 ${
               isSelected
-                ? "bg-primary text-on-primary"
+                ? "bg-primary text-on-primary shadow-ambient"
                 : "bg-surface-lowest text-on-surface-variant hover:bg-surface-high"
             }`}
           >
