@@ -138,7 +138,7 @@ export default function HomePage() {
       {/* Venue Type */}
       <section className="px-5 pt-6 space-y-2">
         <h3 className="text-sm font-bold text-primary uppercase tracking-widest font-body">
-          Select Venue Type
+          What are you looking for?
         </h3>
         <VenueTypeSelector selected={venueType} onSelect={setVenueType} />
       </section>
