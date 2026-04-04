@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation";
 import { useSearchStore } from "@/store/search";
 import { TravelerCard } from "@/components/TravelerCard";
 import { VenueTypeSelector } from "@/components/VenueTypeSelector";
+import { RecentSpots } from "@/components/RecentSpots";
 import { Icon } from "@/components/Icon";
+import { saveRecentSpot } from "@/lib/recent-spots";
 
 export default function HomePage() {
   const router = useRouter();
@@ -42,6 +44,7 @@ export default function HomePage() {
 
       const result = await res.json();
       setResult(result);
+      saveRecentSpot(result);
       router.push(`/results/${result.shortCode}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -76,6 +79,9 @@ export default function HomePage() {
           Input your locations to find the mathematically perfect meeting spot.
         </p>
       </section>
+
+      {/* Recent Spots */}
+      <RecentSpots />
 
       {/* Traveler Cards */}
       <section className="px-5 space-y-3">
