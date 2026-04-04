@@ -135,36 +135,6 @@ export default function HomePage() {
           </p>
         )}
       </section>
-
-      {/* Bottom Nav */}
-      <nav className="mt-auto sticky bottom-0 bg-surface-lowest/80 backdrop-blur-lg border-t border-outline-variant/10">
-        <div className="flex items-center justify-around py-2">
-          <NavItem icon="search" label="Search" active />
-          <NavItem icon="event_note" label="Plans" />
-          <NavItem icon="info" label="About" />
-        </div>
-      </nav>
     </div>
-  );
-}
-
-function NavItem({
-  icon,
-  label,
-  active = false,
-}: {
-  icon: string;
-  label: string;
-  active?: boolean;
-}) {
-  return (
-    <button
-      className={`flex flex-col items-center gap-0.5 px-4 py-1 ${
-        active ? "text-primary" : "text-on-surface-variant"
-      }`}
-    >
-      <Icon name={icon} size={24} filled={active} />
-      <span className="text-[10px] font-medium font-body">{label}</span>
-    </button>
   );
 }
