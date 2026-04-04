@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { useSearchStore } from "@/store/search";
 import { TravelerCard } from "@/components/TravelerCard";
 import { VenueTypeSelector } from "@/components/VenueTypeSelector";
+import { RecentSpots } from "@/components/RecentSpots";
 import { Icon } from "@/components/Icon";
+import { saveRecentSpot } from "@/lib/recent-spots";
 import type { SearchError } from "@/lib/types";
 
 export default function HomePage() {
@@ -54,6 +56,7 @@ export default function HomePage() {
       }
 
       setResult(data);
+      saveRecentSpot(data);
       router.push(`/results/${data.shortCode}`);
     } catch (err) {
       setError({
@@ -107,6 +110,9 @@ export default function HomePage() {
           Input your locations to find the mathematically perfect meeting spot.
         </p>
       </section>
+
+      {/* Recent Spots */}
+      <RecentSpots />
 
       {/* Traveler Cards */}
       <section className="px-5 space-y-3">
