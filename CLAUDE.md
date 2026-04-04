@@ -4,7 +4,7 @@ Fair meeting point finder for 2-6 people based on real travel times.
 
 ## Architecture
 
-- **Next.js 15** App Router, TypeScript, standalone Docker output
+- **Next.js 16** App Router, TypeScript, standalone Docker output
 - **Tailwind CSS v4** with custom design tokens (no tailwind.config — uses CSS `@theme`)
 - **Zustand** for client state management
 - **Mapbox** for map tiles, geocoding, address autocomplete, driving/walking/cycling routing
@@ -72,12 +72,28 @@ Mapbox is used for everything except transit routing and venue data (which requi
 
 All API keys are server-side only. Client-side code never sees raw keys.
 
+## Supabase Setup
+
+The project uses Supabase for PostgreSQL storage and Realtime features (shared links, collaborative collection flow).
+
+- **`@supabase/supabase-js`** — Official Supabase client library
+- **`lib/supabase.ts`** — Browser-side Supabase client (uses `NEXT_PUBLIC_*` env vars)
+- **`lib/supabase-server.ts`** — Server-side Supabase client (uses service role key for privileged operations)
+
+Required environment variables:
+- `NEXT_PUBLIC_SUPABASE_URL` — Your Supabase project URL (public)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Anon/public API key (public, RLS-protected)
+- `SUPABASE_SERVICE_ROLE_KEY` — Service role key for server-side operations (secret)
+
 ## Environment Variables
 
 Copy `.env.example` to `.env.local`:
-- `MAPBOX_SECRET_TOKEN` — Mapbox secret token (server-side)
+- `NEXT_PUBLIC_MAPBOX_TOKEN` — Mapbox public token (client-side, for map tiles)
+- `MAPBOX_SECRET_TOKEN` — Mapbox secret token (server-side, for geocoding/routing)
 - `GOOGLE_MAPS_API_KEY` — Google Maps Platform key (server-side)
-- Supabase vars are optional until DB is connected
+- `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anon key
+- `SUPABASE_SERVICE_ROLE_KEY` — Supabase service role key (server-side only)
 
 ## Commands
 
