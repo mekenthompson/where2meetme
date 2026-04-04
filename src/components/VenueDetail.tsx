@@ -2,6 +2,7 @@
 
 import { Icon } from "./Icon";
 import { ParityMeter } from "./ParityMeter";
+import { VenueMap } from "./VenueMap";
 import type { VenueResult, Participant } from "@/lib/types";
 
 interface VenueDetailProps {
@@ -85,6 +86,16 @@ export function VenueDetail({
           <span className="text-xs text-on-surface-variant">Fair</span>
         </div>
       </div>
+
+      {/* Map */}
+      <section className="px-5 pt-5">
+        <VenueMap
+          venueLat={venue.lat}
+          venueLng={venue.lng}
+          venueName={venue.name}
+          participants={participants}
+        />
+      </section>
 
       {/* Venue info */}
       <section className="px-5 pt-5 space-y-1">
