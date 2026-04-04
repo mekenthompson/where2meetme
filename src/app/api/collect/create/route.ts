@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase-server";
+import { pool } from "@/lib/db";
 import { nanoid } from "nanoid";
 
 export async function POST(request: NextRequest) {
@@ -17,18 +17,16 @@ export async function POST(request: NextRequest) {
     const shortCode = nanoid(8);
 
     // Create search with status='collecting'
-    const { data: search, error: searchError } = await supabaseServer
-      .from("searches")
-      .insert({
-        short_code: shortCode,
-        venue_type: venueType,
-        status: "collecting",
-      })
-      .select()
-      .single();
+    const searchResult = await pool.query(
+      `INSERT INTO searches (short_code, venue_type, status)
+       VALUES ($1, $2, $3)
+       RETURNING id`,
+      [shortCode, venueType, "collecting"]
+    );
 
-    if (searchError || !search) {
-      console.error("Failed to create search:", searchError);
+    const searchId = searchResult.rows[0]?.id;
+    if (!searchId) {
+      console.error("Failed to create search: no id returned");
       return NextResponse.json(
         { error: "Failed to create search" },
         { status: 500 }
@@ -36,34 +34,28 @@ export async function POST(request: NextRequest) {
     }
 
     // Create participant slots with collect_tokens
-    const participantRows = participants.map((p: { label: string }) => ({
-      search_id: search.id,
-      label: p.label,
-      collect_token: nanoid(16),
-      travel_mode: "driving",
-    }));
-
-    const { data: createdParticipants, error: participantsError } =
-      await supabaseServer
-        .from("participants")
-        .insert(participantRows)
-        .select();
-
-    if (participantsError || !createdParticipants) {
-      console.error("Failed to create participants:", participantsError);
-      return NextResponse.json(
-        { error: "Failed to create participants" },
-        { status: 500 }
+    const createdParticipants = [];
+    for (const p of participants as { label: string }[]) {
+      const collectToken = nanoid(16);
+      const participantResult = await pool.query(
+        `INSERT INTO participants (search_id, label, collect_token, travel_mode)
+         VALUES ($1, $2, $3, $4)
+         RETURNING id, label, collect_token`,
+        [searchId, p.label, collectToken, "driving"]
       );
+      const row = participantResult.rows[0];
+      if (row) {
+        createdParticipants.push({
+          id: row.id,
+          label: row.label,
+          collectToken: row.collect_token,
+        });
+      }
     }
 
     return NextResponse.json({
       shortCode,
-      participants: createdParticipants.map((p) => ({
-        id: p.id,
-        label: p.label,
-        collectToken: p.collect_token,
-      })),
+      participants: createdParticipants,
     });
   } catch (error) {
     console.error("Error creating collection:", error);

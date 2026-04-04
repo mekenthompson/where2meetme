@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { calculateFairMidpoint } from "@/lib/midpoint";
-import { supabaseServer } from "@/lib/supabase-server";
+import { pool } from "@/lib/db";
 import type { Participant, VenueType, VenueResult, SearchError } from "@/lib/types";
 import { LRUCache } from "@/lib/cache";
 
@@ -365,66 +365,31 @@ export async function POST(req: NextRequest) {
     // Log API call count for monitoring
     console.log(`[Search API] External API calls: ${apiCallCounter.count}`);
 
-    // Store in Supabase (gracefully handle failures)
+    // Store in database (gracefully handle failures)
     try {
       // Insert search record
-      const { error: searchError } = await supabaseServer
-        .from("searches")
-        .insert({
-          id: searchId,
-          short_code: shortCode,
-          venue_type: venueType,
-          status: "complete",
-          midpoint_lat: midpointResult.midpoint.lat,
-          midpoint_lng: midpointResult.midpoint.lng,
-        });
+      await pool.query(
+        `INSERT INTO searches (id, short_code, venue_type, status, midpoint_lat, midpoint_lng)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [searchId, shortCode, venueType, "complete", midpointResult.midpoint.lat, midpointResult.midpoint.lng]
+      );
 
-      if (searchError) {
-        console.error("Failed to insert search:", searchError);
-      } else {
-        // Insert participants
-        const participantRows = result.participants.map((p) => ({
-          search_id: searchId,
-          label: p.label,
-          origin_place_id: p.originPlaceId,
-          origin_lat: p.originLat,
-          origin_lng: p.originLng,
-          origin_display_name: p.originDisplayName,
-          travel_mode: p.travelMode,
-          travel_time_seconds: p.travelTimeSeconds,
-        }));
+      // Insert participants
+      for (const p of result.participants) {
+        await pool.query(
+          `INSERT INTO participants (search_id, label, origin_place_id, origin_lat, origin_lng, origin_display_name, travel_mode, travel_time_seconds)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          [searchId, p.label, p.originPlaceId, p.originLat, p.originLng, p.originDisplayName, p.travelMode, p.travelTimeSeconds]
+        );
+      }
 
-        const { error: participantsError } = await supabaseServer
-          .from("participants")
-          .insert(participantRows);
-
-        if (participantsError) {
-          console.error("Failed to insert participants:", participantsError);
-        }
-
-        // Insert venues
-        const venueRows = venues.map((v) => ({
-          search_id: searchId,
-          place_id: v.placeId,
-          name: v.name,
-          address: v.address,
-          short_address: v.shortAddress,
-          lat: v.lat,
-          lng: v.lng,
-          rating: v.rating,
-          user_ratings_total: v.userRatingsTotal,
-          photo_reference: v.photoReference,
-          fairness_score: v.fairnessScore,
-          travel_times: v.travelTimes,
-        }));
-
-        const { error: venuesError } = await supabaseServer
-          .from("venues")
-          .insert(venueRows);
-
-        if (venuesError) {
-          console.error("Failed to insert venues:", venuesError);
-        }
+      // Insert venues
+      for (const v of venues) {
+        await pool.query(
+          `INSERT INTO venues (search_id, place_id, name, address, short_address, lat, lng, rating, user_ratings_total, photo_reference, fairness_score, travel_times)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+          [searchId, v.placeId, v.name, v.address, v.shortAddress, v.lat, v.lng, v.rating, v.userRatingsTotal, v.photoReference, v.fairnessScore, JSON.stringify(v.travelTimes)]
+        );
       }
     } catch (dbError) {
       // DB is down or misconfigured — log but don't fail the request

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase-server";
+import { pool } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,14 +13,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find participant by collect_token
-    const { data: participant, error: findError } = await supabaseServer
-      .from("participants")
-      .select("*, search:searches!participants_search_id_fkey(id, short_code)")
-      .eq("collect_token", token)
-      .single();
+    // Find participant by collect_token with search data
+    const findResult = await pool.query(
+      `SELECT p.*, s.id as search_id, s.short_code
+       FROM participants p
+       JOIN searches s ON p.search_id = s.id
+       WHERE p.collect_token = $1`,
+      [token]
+    );
 
-    if (findError || !participant) {
+    const participant = findResult.rows[0];
+    if (!participant) {
       return NextResponse.json(
         { error: "Invalid or expired token" },
         { status: 404 }
@@ -36,50 +39,33 @@ export async function POST(request: NextRequest) {
     }
 
     // Update participant with origin data
-    const { error: updateError } = await supabaseServer
-      .from("participants")
-      .update({
-        origin_lat: originLat,
-        origin_lng: originLng,
-        origin_display_name: originDisplayName,
-        travel_mode: travelMode,
-        submitted_at: new Date().toISOString(),
-      })
-      .eq("collect_token", token);
-
-    if (updateError) {
-      console.error("Failed to update participant:", updateError);
-      return NextResponse.json(
-        { error: "Failed to submit response" },
-        { status: 500 }
-      );
-    }
+    await pool.query(
+      `UPDATE participants
+       SET origin_lat = $1, origin_lng = $2, origin_display_name = $3, travel_mode = $4, submitted_at = NOW()
+       WHERE collect_token = $5`,
+      [originLat, originLng, originDisplayName, travelMode, token]
+    );
 
     // Check if all participants have submitted
-    const { data: allParticipants, error: checkError } = await supabaseServer
-      .from("participants")
-      .select("origin_lat")
-      .eq("search_id", (participant.search as any).id);
+    const checkResult = await pool.query(
+      `SELECT origin_lat FROM participants WHERE search_id = $1`,
+      [participant.search_id]
+    );
 
-    if (checkError) {
-      console.error("Failed to check participants:", checkError);
-      return NextResponse.json({ success: true, allSubmitted: false });
-    }
-
-    const allSubmitted = allParticipants.every((p) => p.origin_lat !== null);
+    const allSubmitted = checkResult.rows.every((p) => p.origin_lat !== null);
 
     // If all submitted, update search status to 'ready'
     if (allSubmitted) {
-      await supabaseServer
-        .from("searches")
-        .update({ status: "ready" })
-        .eq("id", (participant.search as any).id);
+      await pool.query(
+        `UPDATE searches SET status = 'ready' WHERE id = $1`,
+        [participant.search_id]
+      );
     }
 
     return NextResponse.json({
       success: true,
       allSubmitted,
-      shortCode: (participant.search as any).short_code,
+      shortCode: participant.short_code,
     });
   } catch (error) {
     console.error("Error submitting collection:", error);

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { supabaseServer } from "@/lib/supabase-server";
+import { pool } from "@/lib/db";
 import { Icon } from "@/components/Icon";
 import { SharedResultsClient } from "./SharedResultsClient";
 import type { Metadata } from "next";
@@ -16,11 +16,11 @@ export async function generateMetadata({
 
   try {
     // Fetch search and top venue for OG tags
-    const { data: search } = await supabaseServer
-      .from("searches")
-      .select("*")
-      .eq("short_code", shortCode)
-      .single();
+    const searchResult = await pool.query(
+      `SELECT * FROM searches WHERE short_code = $1`,
+      [shortCode]
+    );
+    const search = searchResult.rows[0];
 
     if (!search) {
       return {
@@ -29,20 +29,18 @@ export async function generateMetadata({
       };
     }
 
-    const { data: participants } = await supabaseServer
-      .from("participants")
-      .select("*")
-      .eq("search_id", search.id);
+    const participantsResult = await pool.query(
+      `SELECT * FROM participants WHERE search_id = $1`,
+      [search.id]
+    );
 
-    const { data: topVenue } = await supabaseServer
-      .from("venues")
-      .select("*")
-      .eq("search_id", search.id)
-      .order("fairness_score", { ascending: false })
-      .limit(1)
-      .single();
+    const topVenueResult = await pool.query(
+      `SELECT * FROM venues WHERE search_id = $1 ORDER BY fairness_score DESC LIMIT 1`,
+      [search.id]
+    );
+    const topVenue = topVenueResult.rows[0];
 
-    const participantCount = participants?.length ?? 0;
+    const participantCount = participantsResult.rows?.length ?? 0;
     const title = topVenue
       ? `Meet at ${topVenue.name} — Where2Meet.Me`
       : "Where2Meet.Me — Fair Meeting Point";
@@ -77,33 +75,32 @@ export async function generateMetadata({
 export default async function SharedResultPage({ params }: SharedPageProps) {
   const { shortCode } = await params;
 
-  // Fetch search data from Supabase
-  const { data: search, error: searchError } = await supabaseServer
-    .from("searches")
-    .select("*")
-    .eq("short_code", shortCode)
-    .single();
+  // Fetch search data from database
+  const searchResult = await pool.query(
+    `SELECT * FROM searches WHERE short_code = $1`,
+    [shortCode]
+  );
+  const search = searchResult.rows[0];
 
-  if (searchError || !search) {
+  if (!search) {
     notFound();
   }
 
   // Fetch participants
-  const { data: participantsData } = await supabaseServer
-    .from("participants")
-    .select("*")
-    .eq("search_id", search.id);
+  const participantsResult = await pool.query(
+    `SELECT * FROM participants WHERE search_id = $1`,
+    [search.id]
+  );
 
   // Fetch venues
-  const { data: venuesData } = await supabaseServer
-    .from("venues")
-    .select("*")
-    .eq("search_id", search.id)
-    .order("fairness_score", { ascending: false });
+  const venuesResult = await pool.query(
+    `SELECT * FROM venues WHERE search_id = $1 ORDER BY fairness_score DESC`,
+    [search.id]
+  );
 
   // Transform database records to application types
   const participants: Participant[] =
-    participantsData?.map((p) => ({
+    participantsResult.rows?.map((p) => ({
       id: p.id,
       label: p.label,
       originPlaceId: p.origin_place_id,
@@ -115,7 +112,7 @@ export default async function SharedResultPage({ params }: SharedPageProps) {
     })) ?? [];
 
   const venues: VenueResult[] =
-    venuesData?.map((v) => ({
+    venuesResult.rows?.map((v) => ({
       placeId: v.place_id,
       name: v.name,
       address: v.address ?? "",
