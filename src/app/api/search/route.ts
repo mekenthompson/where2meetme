@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { calculateFairMidpoint } from "@/lib/midpoint";
+import { supabaseServer } from "@/lib/supabase-server";
 import type { Participant, VenueType, VenueResult, SearchError } from "@/lib/types";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_MAPS_API_KEY ?? "";
@@ -11,16 +12,7 @@ const venueTypeToGoogleType: Record<VenueType, string> = {
   bar: "bar",
   park: "park",
   library: "library",
-  coworking: "cafe", // No direct Google type; search cafes with keyword
-};
-
-const venueTypeKeyword: Record<VenueType, string | undefined> = {
-  cafe: undefined,
-  restaurant: undefined,
-  bar: undefined,
-  park: undefined,
-  library: undefined,
-  coworking: "coworking",
+  coworking: "coworking_space",
 };
 
 async function searchNearbyVenues(
@@ -30,15 +22,31 @@ async function searchNearbyVenues(
   radius = 3000
 ): Promise<VenueResult[] | { error: SearchError }> {
   const type = venueTypeToGoogleType[venueType];
-  const keyword = venueTypeKeyword[venueType];
 
-  let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=${type}&key=${GOOGLE_API_KEY}`;
-  if (keyword) {
-    url += `&keyword=${encodeURIComponent(keyword)}`;
-  }
+  const url = "https://places.googleapis.com/v1/places:searchNearby";
+  const body = {
+    includedTypes: [type],
+    maxResultCount: 15,
+    locationRestriction: {
+      circle: {
+        center: { latitude: lat, longitude: lng },
+        radius: radius,
+      },
+    },
+  };
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": GOOGLE_API_KEY,
+      "X-Goog-FieldMask":
+        "places.id,places.displayName,places.formattedAddress,places.shortFormattedAddress,places.location,places.rating,places.userRatingCount,places.photos",
+    },
+    body: JSON.stringify(body),
+  });
 
   try {
-    const res = await fetch(url);
     if (!res.ok) {
       return {
         error: {
@@ -49,7 +57,7 @@ async function searchNearbyVenues(
     }
 
     const data = await res.json();
-    if (data.status !== "OK" || !data.results) {
+    if (!data.places) {
       return {
         error: {
           type: "API_ERROR",
@@ -58,26 +66,26 @@ async function searchNearbyVenues(
       };
     }
 
-    const venues = data.results.slice(0, 15).map(
+    const venues = data.places.map(
       (place: {
-        place_id: string;
-        name: string;
-        vicinity: string;
-        formatted_address?: string;
-        geometry: { location: { lat: number; lng: number } };
+        id: string;
+        displayName?: { text: string };
+        formattedAddress?: string;
+        shortFormattedAddress?: string;
+        location?: { latitude: number; longitude: number };
         rating?: number;
-        user_ratings_total?: number;
-        photos?: { photo_reference: string }[];
+        userRatingCount?: number;
+        photos?: { name: string }[];
       }): VenueResult => ({
-        placeId: place.place_id,
-        name: place.name,
-        address: place.formatted_address ?? place.vicinity,
-        shortAddress: place.vicinity,
-        lat: place.geometry.location.lat,
-        lng: place.geometry.location.lng,
+        placeId: place.id,
+        name: place.displayName?.text ?? "Unknown",
+        address: place.formattedAddress ?? place.shortFormattedAddress ?? "",
+        shortAddress: place.shortFormattedAddress ?? "",
+        lat: place.location?.latitude ?? lat,
+        lng: place.location?.longitude ?? lng,
         rating: place.rating ?? null,
-        userRatingsTotal: place.user_ratings_total ?? null,
-        photoReference: place.photos?.[0]?.photo_reference ?? null,
+        userRatingsTotal: place.userRatingCount ?? null,
+        photoReference: place.photos?.[0]?.name ?? null,
         fairnessScore: 0, // Calculated later
         travelTimes: {},
       })
@@ -267,8 +275,10 @@ export async function POST(req: NextRequest) {
 
     const shortCode = nanoid(8);
 
+    const searchId = crypto.randomUUID();
+
     const result = {
-      id: crypto.randomUUID(),
+      id: searchId,
       shortCode,
       venueType,
       midpointLat: midpointResult.midpoint.lat,
@@ -282,7 +292,71 @@ export async function POST(req: NextRequest) {
       degraded: degraded || undefined,
     };
 
-    // TODO: Store in Supabase when configured
+    // Store in Supabase (gracefully handle failures)
+    try {
+      // Insert search record
+      const { error: searchError } = await supabaseServer
+        .from("searches")
+        .insert({
+          id: searchId,
+          short_code: shortCode,
+          venue_type: venueType,
+          status: "complete",
+          midpoint_lat: midpointResult.midpoint.lat,
+          midpoint_lng: midpointResult.midpoint.lng,
+        });
+
+      if (searchError) {
+        console.error("Failed to insert search:", searchError);
+      } else {
+        // Insert participants
+        const participantRows = result.participants.map((p) => ({
+          search_id: searchId,
+          label: p.label,
+          origin_place_id: p.originPlaceId,
+          origin_lat: p.originLat,
+          origin_lng: p.originLng,
+          origin_display_name: p.originDisplayName,
+          travel_mode: p.travelMode,
+          travel_time_seconds: p.travelTimeSeconds,
+        }));
+
+        const { error: participantsError } = await supabaseServer
+          .from("participants")
+          .insert(participantRows);
+
+        if (participantsError) {
+          console.error("Failed to insert participants:", participantsError);
+        }
+
+        // Insert venues
+        const venueRows = venues.map((v) => ({
+          search_id: searchId,
+          place_id: v.placeId,
+          name: v.name,
+          address: v.address,
+          short_address: v.shortAddress,
+          lat: v.lat,
+          lng: v.lng,
+          rating: v.rating,
+          user_ratings_total: v.userRatingsTotal,
+          photo_reference: v.photoReference,
+          fairness_score: v.fairnessScore,
+          travel_times: v.travelTimes,
+        }));
+
+        const { error: venuesError } = await supabaseServer
+          .from("venues")
+          .insert(venueRows);
+
+        if (venuesError) {
+          console.error("Failed to insert venues:", venuesError);
+        }
+      }
+    } catch (dbError) {
+      // DB is down or misconfigured — log but don't fail the request
+      console.error("Database error:", dbError);
+    }
 
     return NextResponse.json(result);
   } catch (err) {

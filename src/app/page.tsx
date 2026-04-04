@@ -98,9 +98,10 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="px-5 pt-4 pb-6">
-        <h1 className="text-4xl font-extrabold font-headline text-on-surface leading-tight tracking-tight">
+        <h1 className="text-[3.5rem] font-extrabold font-headline text-on-surface leading-[1.1] tracking-[-0.02em]">
           Equality in{" "}
-          <span className="text-primary italic">every mile.</span>
+          <span className="text-primary italic">every mile</span>
+          <span className="text-secondary">.Me</span>
         </h1>
         <p className="text-sm text-on-surface-variant mt-2 font-body leading-relaxed">
           Input your locations to find the mathematically perfect meeting spot.
@@ -144,7 +145,7 @@ export default function HomePage() {
         <button
           onClick={handleSearch}
           disabled={!allLocationsSet || isSearching}
-          className="btn-primary w-full py-4 flex items-center justify-center gap-2 text-base font-semibold font-headline disabled:opacity-40 disabled:cursor-not-allowed"
+          className="btn-primary w-full py-5 flex items-center justify-center gap-2 text-lg font-semibold font-headline disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isSearching ? (
             <>
@@ -176,36 +177,6 @@ export default function HomePage() {
           </div>
         )}
       </section>
-
-      {/* Bottom Nav */}
-      <nav className="mt-auto sticky bottom-0 bg-surface-lowest/80 backdrop-blur-lg border-t border-outline-variant/10">
-        <div className="flex items-center justify-around py-2">
-          <NavItem icon="search" label="Search" active />
-          <NavItem icon="event_note" label="Plans" />
-          <NavItem icon="info" label="About" />
-        </div>
-      </nav>
     </div>
-  );
-}
-
-function NavItem({
-  icon,
-  label,
-  active = false,
-}: {
-  icon: string;
-  label: string;
-  active?: boolean;
-}) {
-  return (
-    <button
-      className={`flex flex-col items-center gap-0.5 px-4 py-1 ${
-        active ? "text-primary" : "text-on-surface-variant"
-      }`}
-    >
-      <Icon name={icon} size={24} filled={active} />
-      <span className="text-[10px] font-medium font-body">{label}</span>
-    </button>
   );
 }
