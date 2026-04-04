@@ -40,7 +40,7 @@ export function VenueCardHero({ venue, participants, onSelect }: VenueCardHeroPr
             className="w-full h-full object-cover"
           />
           <div className="absolute top-4 right-4 bg-surface-lowest/90 backdrop-blur-sm rounded-xl px-3 py-2 flex items-center gap-1.5 shadow-sm">
-            <span className="material-symbols-outlined text-amber-500 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <span className="material-symbols-outlined text-amber-500 text-sm" style={{ fontFamily: "'Material Symbols Outlined Variable', 'Material Symbols Outlined'", fontVariationSettings: "'FILL' 1" }}>
               star
             </span>
             <span className="text-xs font-bold">{venue.rating}</span>
