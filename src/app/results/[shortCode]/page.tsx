@@ -4,6 +4,7 @@ import { useSearchStore } from "@/store/search";
 import { VenueCard } from "@/components/VenueCard";
 import { VenueDetail } from "@/components/VenueDetail";
 import { Icon } from "@/components/Icon";
+import { ResultsMap } from "@/components/ResultsMap";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { VenueResult } from "@/lib/types";
@@ -67,30 +68,14 @@ export default function ResultsPage() {
         </div>
       </header>
 
-      {/* Map placeholder */}
-      <section className="relative h-48 bg-surface-low mx-5 rounded-2xl overflow-hidden flex items-center justify-center">
-        <div className="text-center space-y-2">
-          <Icon name="map" size={40} className="text-on-surface-variant/30" />
-          <p className="text-xs text-on-surface-variant">
-            Interactive map coming soon
-          </p>
-          <div className="flex items-center justify-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-            <span className="text-xs text-secondary font-medium">Midpoint found</span>
-          </div>
-        </div>
-
-        {/* Participant markers overlay */}
-        <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-1">
-          {result.participants.map((p) => (
-            <span
-              key={p.id}
-              className="bg-surface-lowest/90 backdrop-blur-sm text-xs px-2 py-0.5 rounded-full text-on-surface font-medium"
-            >
-              {p.label}
-            </span>
-          ))}
-        </div>
+      {/* Interactive Map */}
+      <section className="mx-5">
+        <ResultsMap
+          midpointLat={result.midpointLat}
+          midpointLng={result.midpointLng}
+          participants={result.participants}
+          venues={result.venues}
+        />
       </section>
 
       {/* Results header */}
