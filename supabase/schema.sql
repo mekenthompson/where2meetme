@@ -29,6 +29,7 @@ create table if not exists participants (
   origin_display_name text,
   travel_mode text not null default 'driving' check (travel_mode in ('driving', 'transit', 'walking', 'bicycling')),
   travel_time_seconds integer,
+  collect_token text unique,
   submitted_at timestamptz not null default now()
 );
 
