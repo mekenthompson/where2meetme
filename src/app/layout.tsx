@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Manrope, Inter } from "next/font/google";
 import "@fontsource-variable/material-symbols-outlined";
 import "./globals.css";
+import "./icons.css";
 
 const manrope = Manrope({
   variable: "--font-manrope",
