@@ -48,3 +48,10 @@ export interface Coordinates {
   lat: number;
   lng: number;
 }
+
+export type SearchErrorType = "NO_VENUES" | "API_ERROR" | "RATE_LIMITED" | "DEGRADED";
+
+export interface SearchError {
+  type: SearchErrorType;
+  message: string;
+}
