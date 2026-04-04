@@ -41,8 +41,29 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body className="min-h-dvh flex flex-col bg-surface text-on-surface font-body antialiased">
         {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').then(
+                    (registration) => {
+                      console.log('SW registered:', registration.scope);
+                    },
+                    (error) => {
+                      console.log('SW registration failed:', error);
+                    }
+                  );
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
