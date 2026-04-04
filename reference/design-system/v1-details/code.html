@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Where2Meet.Me - Venue Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "surface-container": "#eeeef0",
+                        "surface-tint": "#4c56af",
+                        "secondary-fixed-dim": "#88d982",
+                        "surface-dim": "#d9dadc",
+                        "inverse-surface": "#2f3132",
+                        "on-background": "#1a1c1d",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#bdc2ff",
+                        "secondary": "#1b6d24",
+                        "on-primary-fixed-variant": "#343d96",
+                        "on-tertiary-fixed-variant": "#00531e",
+                        "surface": "#f9f9fb",
+                        "inverse-primary": "#bdc2ff",
+                        "outline": "#767683",
+                        "on-secondary-container": "#217128",
+                        "on-primary-container": "#8690ee",
+                        "surface-bright": "#f9f9fb",
+                        "on-secondary-fixed": "#002204",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#005312",
+                        "on-tertiary-fixed": "#002108",
+                        "surface-container-highest": "#e2e2e4",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e8e8ea",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#000767",
+                        "surface-container-low": "#f3f3f5",
+                        "on-tertiary-container": "#00b048",
+                        "surface-variant": "#e2e2e4",
+                        "on-surface-variant": "#454652",
+                        "outline-variant": "#c6c5d4",
+                        "secondary-fixed": "#a3f69c",
+                        "tertiary-fixed": "#69ff87",
+                        "inverse-on-surface": "#f0f0f2",
+                        "tertiary": "#002108",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#1a1c1d",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#a0f399",
+                        "background": "#f9f9fb",
+                        "primary-container": "#1a237e",
+                        "tertiary-container": "#003912",
+                        "primary-fixed": "#e0e0ff",
+                        "primary": "#000666",
+                        "tertiary-fixed-dim": "#3ce36a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f9f9fb] dark:bg-slate-950 flex justify-between items-center px-6 py-4">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-slate-500 hover:bg-slate-100 transition-colors p-2 rounded-full">arrow_back</button>
+<span class="text-2xl font-black text-[#1A237E] dark:text-indigo-400 tracking-tighter font-headline">Where2Meet.Me</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-slate-500 hover:bg-slate-100 transition-colors p-2 rounded-full">share</button>
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img alt="close-up portrait of a professional man with a friendly expression in a modern office setting" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8iBZdaI95mYI9wxJaljqGwHbCMf6zB1ifPF22zrPSqc9bGWUaBOB-dFkSyToLKHgrqwbDNFUz-koh75ITLY0r9CS7uUGesY1Y7c8mJDdwNfYkYZiStTDlGnShdtKVTTX_f1wbI3oZoojcBMy_5JuHYPtVamQUb-902Hwp6P0OiCxBBi0QNXcG7Vzu4lHJxR6hBIi_rRriGzc0dpaTNAIYWLeqPpW9toNBXCyWXbjC6N1OW7Vn62je8ZFHOrho6C5ZBjAWbldO2w0"/>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-32 max-w-5xl mx-auto px-4 md:px-6">
+<!-- Hero Section & Image Carousel -->
+<section class="relative group mb-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-3 h-[300px] md:h-[450px]">
+<div class="md:col-span-3 rounded-xl overflow-hidden relative">
+<img alt="luxurious modern cafe interior with velvet seating, brass accents, and large windows with soft natural morning light" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEL5b25rhoYfkhNjY4fRAoZNBZc2JO1LZynG_-hKUtCRhJJhVN5eMRFEZXPQt6ct_Oc6RlRxmk4Bg03R37v98bwJNpaNoIBzg9X-EwJoxnb8bwI2nDRhnO4QY8RhINNXhxg_KWMC_Ab0JfYp5Ak1n2_HFE3DhMBfQKlZdhIKFJSOgL9A9AJS_qsOChRbHH5XPqpJ_BuLWMqG3AJxVD6229btGGxIAIdnVo5EMGxo6m3TWle72-ien66uwfJZ8k_WEGaY1BzpPGu0o"/>
+<div class="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">photo_library</span> 1/12 Photos
+                    </div>
+</div>
+<div class="hidden md:flex flex-col gap-3">
+<div class="h-1/2 rounded-xl overflow-hidden">
+<img alt="barista pouring latte art in a stylish ceramic cup on a marble counter top" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCpNtKJsJyrxNDwtOU_qA6ZlCQXZc7jNtgt4sgn8jyBvJiyeWYQJB0wcKYW6KL39xryg0ujecs3HpFP4ueIkt1TGRlC3gbTa9aESmhM4_UGW9ewHuSzOeIrF5tUQNKhIFGvZ2KszUNjScNCrveJ3CjSJbOHZkARvjRM98nmGaqUXUSuvo4AieMN6XLx6wwBhO4b0426CZHqxX9p9gwPFiB-UcZBkJZEX5ueLJ3vDayV26sgltpRJqiNOrvbEtpYLJEJaB1sUBgXI0"/>
+</div>
+<div class="h-1/2 rounded-xl overflow-hidden relative">
+<img alt="selection of artisan pastries and coffee on a rustic wooden table in a sunlit bakery" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKqZdzwQjrwqyLYWDPqnwOvM49vI8NUY22cmh5H2Q5jW0P9Hl1cdht5M1Wh3cSItjXJigD8CRt7l51Vsw8HkZKxmnxZrnaws1eLqqoR7jow0zAB6SiOvmmVgm7HYevHOTZLewAqsPtjzCPRd_Z63-g_-qZ1gt6ulkISRo_WoC6Sf60yecWa7LsTK_VNlt6mCUoySnX7TOHWYwpXm-VqzIRU_Pt1Puey9Xku4aAPoMp6F_hS9oKpJuYm-4I4Uu8xYB_K9z7PKgeNZw"/>
+<div class="absolute inset-0 bg-primary/20 backdrop-blur-[2px] flex items-center justify-center cursor-pointer group">
+<span class="text-white font-bold group-hover:scale-110 transition-transform">See all</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Header Info -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div class="space-y-3">
+<div class="flex items-center gap-2">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold tracking-wide">CAFE &amp; COWORKING</span>
+<div class="flex items-center text-secondary font-bold text-sm">
+<span class="material-symbols-outlined text-base mr-1" style="font-variation-settings: 'FILL' 1;">star</span>
+                        4.8 <span class="text-outline ml-1 font-medium">(243 reviews)</span>
+</div>
+</div>
+<h1 class="text-4xl md:text-5xl font-extrabold font-headline text-primary tracking-tight leading-none">The Artisan’s Loft</h1>
+<p class="text-on-surface-variant flex items-center gap-2 text-lg">
+<span class="material-symbols-outlined text-outline">location_on</span>
+                    242 East 14th Street, Manhattan, NY 10003
+                </p>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-container-highest p-4 rounded-xl hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="bg-surface-container-highest p-4 rounded-xl hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">bookmark</span>
+</button>
+</div>
+</div>
+<!-- Bento Layout for Content -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Side: Travel & Reviews -->
+<div class="lg:col-span-2 space-y-8">
+<!-- Travel Time Section -->
+<div class="bg-surface-container-low rounded-xl p-8">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-2xl font-bold font-headline text-primary">Travel Parity</h3>
+<p class="text-on-surface-variant text-sm">Calculated for your current meeting point</p>
+</div>
+<span class="bg-secondary text-white px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                            Highly Balanced
+                        </span>
+</div>
+<div class="space-y-10">
+<!-- Person A -->
+<div class="flex items-center justify-between gap-6">
+<div class="flex items-center gap-4 flex-1">
+<div class="w-12 h-12 rounded-full border-2 border-primary overflow-hidden shrink-0">
+<img alt="user avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJch0Zq-OiUYfgTlda0najIf5EFGRdSbd1PSsg5fy_iBwOCtvYtByHeV2tn8pTb1fyaVU5Uq3zqA2hnG9Hr1U1lJtdVqKuSxONuKupiTsP31LFEALSf-J9OITvMpUjeuSzDNPcaayfJ1RjTxi_-lnsQo9_uS1JEjIX3F6gnqkKxJtRsXyMybahOs3BuVxa_GKKj7kFgmd6kWnix0x9eRDM189C4WxiH9qFXFZ28HlebwP7PpefwqG1BlfLTiLEiWcO400aX9WMnII"/>
+</div>
+<div>
+<p class="font-bold text-primary">James</p>
+<p class="text-xs text-on-surface-variant">From Brooklyn</p>
+</div>
+</div>
+<div class="text-right flex items-center gap-6">
+<div class="flex flex-col items-end">
+<span class="text-2xl font-black font-headline text-primary">18m</span>
+<span class="text-xs font-bold text-outline uppercase tracking-widest flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">subway</span> Transit
+                                    </span>
+</div>
+</div>
+</div>
+<!-- Parity Meter -->
+<div class="relative py-4">
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary w-1/2"></div>
+<div class="h-full bg-secondary/80 w-1/2 border-l-2 border-surface-container-low"></div>
+</div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white rounded-full shadow-lg flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm font-bold">compare_arrows</span>
+</div>
+</div>
+<!-- Person B -->
+<div class="flex items-center justify-between gap-6">
+<div class="flex items-center gap-4 flex-1">
+<div class="w-12 h-12 rounded-full border-2 border-primary-fixed-dim overflow-hidden shrink-0">
+<img alt="smiling young woman with blonde hair in a professional portrait" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5ZQE6im8qwdW7ABGoB0GGwJSQZSJj8RDgOnJkFCmHi0hkXZOgpyo6mSpSha7WE0HlAB07S60eIHzmt5YiU5xkSCT3WZWL76d9mZdjqVuf53G47XS7HrbhU68Tqik8goyBcBVQSE0BbdFVwU__KJUUHgDKOf0qZrZ-Z8xdy7UlaP5Z0AVFmfhG6sol1XMkaVM84A_Qq8D2h7ziWC0mnBlLYeP0EKob4Sv-lsdFrtQTAr4Ga7JjSzBVNfktb_IRPK3VE43CtcfgG-M"/>
+</div>
+<div>
+<p class="font-bold text-primary">Sarah</p>
+<p class="text-xs text-on-surface-variant">From Upper West Side</p>
+</div>
+</div>
+<div class="text-right flex items-center gap-6">
+<div class="flex flex-col items-end">
+<span class="text-2xl font-black font-headline text-primary">21m</span>
+<span class="text-xs font-bold text-outline uppercase tracking-widest flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">directions_car</span> Uber
+                                    </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Review Snippets -->
+<div class="space-y-6">
+<h3 class="text-2xl font-bold font-headline text-primary">What guests are saying</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<div class="flex items-center gap-3 mb-4">
+<img alt="avatar of a male reviewer" class="w-8 h-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmVHLPupei74Goa5OY1aTo2YHlaRdD-so06-7uFEJm8e9-n6cm9vuSIlLpGhIa6NpwG2IGePsdKPueEV0d9OsaD3rClg4UkmQ7jvFAdrA0IRjHtvL7lHqg8u2XfwH-PXoz1Jrf8sUiMvjGW4jpAo9FeRBTD3Bj0BAapaB1SouPOXwlYv0WgDaVmEkP7l00QztHK_DgzZpxIrRxS_YNG2i9-1cuyOwQQqxivRS04LUaq8-PQ_A3oI2Syiu5FIwZIKaLWpEwsJcl7ac"/>
+<div>
+<p class="text-sm font-bold">Marcus T.</p>
+<div class="flex text-secondary scale-75 -ml-4 origin-left">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm italic leading-relaxed">"The perfect midpoint for meetings via Where2Meet.Me. Great Wi-Fi and even better espresso. It's my go-to for remote work sessions."</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<div class="flex items-center gap-3 mb-4">
+<img alt="avatar of a female reviewer" class="w-8 h-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhIRWpPqTGow6u2EjGQZdwQMJVcrI3h9Llqd6kLJbz0MlGKi8mHPxkrOkbX3EKU9wsfp4Ijfe7SGktbqlKdsuZwCF8TSOVB6a3RcmIXIiIQGgHD_ahpdexzBU2L3JnNY69yAMz8-Vrodi_2datJT1y8o21HAqEfOHtaPdxdgc-LICc5Mw9MBVIikWQvm-b_Jf2vaP7yim2cRxoMgpajdZEqEevSOPKEtmTz4geD6-39vrngE5RVyZ8SY2k9AUaXKvpLcrVcNBx2mc"/>
+<div>
+<p class="text-sm font-bold">Elena R.</p>
+<div class="flex text-secondary scale-75 -ml-4 origin-left">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">star</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm italic leading-relaxed">"Atmosphere is incredible. Where2Meet.Me always finds the best spots. A bit busy on Tuesday afternoons, but the staff handles it well."</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side: CTA & Details -->
+<div class="space-y-6">
+<!-- Main Action Card -->
+<div class="bg-primary p-8 rounded-xl text-white shadow-xl">
+<h4 class="text-xl font-bold font-headline mb-4">Ready to meet?</h4>
+<p class="text-primary-fixed-dim text-sm mb-8">Send the Where2Meet.Me invite and directions to everyone in one click.</p>
+<div class="space-y-4">
+<button class="w-full bg-gradient-to-br from-white to-primary-fixed text-primary font-bold py-4 rounded-full flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-lg">
+<span class="material-symbols-outlined">near_me</span>
+                            Get Directions
+                        </button>
+<button class="w-full bg-white/10 backdrop-blur-md text-white font-bold py-4 rounded-full flex items-center justify-center gap-3 hover:bg-white/20 transition-all border border-white/10">
+<span class="material-symbols-outlined">map</span>
+                            Google Maps Details
+                        </button>
+</div>
+</div>
+<!-- Venue Info List -->
+<div class="bg-surface-container-low rounded-xl p-6 space-y-6">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary bg-primary/5 p-2 rounded-lg">schedule</span>
+<div>
+<p class="font-bold text-sm">Open Today</p>
+<p class="text-on-surface-variant text-sm">8:00 AM – 10:00 PM</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary bg-primary/5 p-2 rounded-lg">wifi</span>
+<div>
+<p class="font-bold text-sm">Fast Wi-Fi</p>
+<p class="text-on-surface-variant text-sm">Free for customers</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary bg-primary/5 p-2 rounded-lg">electric_bolt</span>
+<div>
+<p class="font-bold text-sm">Outlets Available</p>
+<p class="text-on-surface-variant text-sm">Ample charging stations</p>
+</div>
+</div>
+</div>
+<!-- Map Preview -->
+<div class="rounded-xl overflow-hidden h-48 relative border-4 border-surface-container-low">
+<img alt="abstract stylized digital map of New York city streets with soft navy and white tones" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAypYMqrsofY-5ethX7fZuaib7z3ga-2txQAQ6aJIO3o5qpLwsKgZZzGPCza1F22WN6_OrQqLVU5jI4Y9W1Mk2SSN-YNcE0iUWCnKTxmhyhkvlHj_Cq2dZTeFGd7ol6Nl8rybtn0WtczVJh4AcMOnQzRiEGJqLkJihgHZ-5kRyxnsb5KSjBqHRW6sbj85L7p4Dx27kSN-n48BW5GbRggjUDe_s4YbI31Odv7_ecXzTJUI4KF5NKF921a8oFpYLay1jOIGHQUvoch3I"/>
+<div class="absolute inset-0 bg-primary/10"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+<div class="relative">
+<span class="material-symbols-outlined text-primary text-4xl animate-bounce" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 bg-black/20 blur-[2px] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl z-50 rounded-t-[24px] border-t border-slate-200/20 shadow-[0_-4px_32px_rgba(26,28,29,0.06)]">
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-4 py-2 hover:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-['Inter'] text-[11px] font-medium mt-1">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-4 py-2 hover:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-['Inter'] text-[11px] font-medium mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-4 py-2 hover:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-['Inter'] text-[11px] font-medium mt-1">Favorites</span>
+</a>
+</nav>
+</body></html>
