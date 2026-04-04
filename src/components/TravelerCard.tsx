@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Icon } from "./Icon";
 import { TravelModeChips } from "./TravelModeChips";
 import { LocationInput } from "./LocationInput";
-import type { Participant, TravelMode } from "@/lib/types";
+import type { Participant, TravelMode, VenueType } from "@/lib/types";
 
 interface TravelerCardProps {
   participant: Participant;
@@ -12,6 +12,8 @@ interface TravelerCardProps {
   canRemove: boolean;
   onUpdate: (id: string, updates: Partial<Participant>) => void;
   onRemove: (id: string) => void;
+  venueType?: VenueType;
+  allParticipants?: Participant[];
 }
 
 export function TravelerCard({
@@ -20,8 +22,12 @@ export function TravelerCard({
   canRemove,
   onUpdate,
   onRemove,
+  venueType,
+  allParticipants,
 }: TravelerCardProps) {
   const [isEditingLabel, setIsEditingLabel] = useState(false);
+  const [isCreatingInvite, setIsCreatingInvite] = useState(false);
+  const [inviteToken, setInviteToken] = useState<string | null>(null);
 
   const handleLocationSelect = (place: {
     placeId: string;
@@ -57,6 +63,63 @@ export function TravelerCard({
       onUpdate(participant.id, { label: labels[index] ?? `Traveler ${index + 1}` });
     }
   };
+
+  const handleInvite = async () => {
+    if (!venueType || !allParticipants) {
+      alert("Unable to create invite link");
+      return;
+    }
+
+    setIsCreatingInvite(true);
+
+    try {
+      const res = await fetch("/api/collect/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          participants: allParticipants.map((p) => ({
+            label: p.label,
+            travelMode: p.travelMode,
+          })),
+          venueType,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create collection");
+      }
+
+      const data = await res.json();
+      const participantData = data.participantTokens.find(
+        (pt: { label: string; token: string }) => pt.label === participant.label
+      );
+
+      if (!participantData) {
+        throw new Error("Could not find participant token");
+      }
+
+      const inviteUrl = `${window.location.origin}/collect/${participantData.token}`;
+      setInviteToken(participantData.token);
+
+      if (navigator.share) {
+        await navigator.share({
+          title: "Where2Meet.Me - Share Your Location",
+          text: `${participant.label}, share your location for our meetup!`,
+          url: inviteUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(inviteUrl);
+        alert("Invite link copied to clipboard!");
+      }
+    } catch (err) {
+      console.error("Failed to create invite:", err);
+      alert("Failed to create invite link");
+    } finally {
+      setIsCreatingInvite(false);
+    }
+  };
+
+  const hasOrigin = participant.originLat !== null && participant.originLng !== null;
 
   return (
     <div className="bg-surface-lowest rounded-2xl p-5 shadow-ambient space-y-3">
@@ -97,9 +160,23 @@ export function TravelerCard({
       </div>
 
       <div className="space-y-1">
-        <label className="text-xs font-medium text-on-surface-variant uppercase tracking-wider font-body">
-          Origin
-        </label>
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium text-on-surface-variant uppercase tracking-wider font-body">
+            Origin
+          </label>
+          {!hasOrigin && venueType && allParticipants && (
+            <button
+              onClick={handleInvite}
+              disabled={isCreatingInvite}
+              className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
+            >
+              <Icon name="share" size={16} />
+              <span className="font-body">
+                {isCreatingInvite ? "Creating..." : "Invite"}
+              </span>
+            </button>
+          )}
+        </div>
         <LocationInput
           value={participant.originDisplayName}
           onChange={handleLocationSelect}

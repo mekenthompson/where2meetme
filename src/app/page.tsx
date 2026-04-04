@@ -87,6 +87,8 @@ export default function HomePage() {
             canRemove={participants.length > 2}
             onUpdate={updateParticipant}
             onRemove={removeParticipant}
+            venueType={venueType}
+            allParticipants={participants}
           />
         ))}
 

@@ -71,3 +71,9 @@ create policy "Public insert" on venues for insert with check (true);
 
 -- Enable realtime for collection flow
 alter publication supabase_realtime add table participants;
+
+-- Add collect_token field for collection flow
+alter table participants add column if not exists collect_token text unique;
+
+-- Public update policy for collection flow (participants can submit their origins)
+create policy "Public update" on participants for update with check (true);
