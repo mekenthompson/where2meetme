@@ -90,13 +90,15 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-dvh">
       {/* Header */}
-      <header className="flex items-center justify-between px-5 pt-4 pb-2">
-        <h2 className="text-lg font-bold font-headline text-primary">
-          Where2Meet<span className="text-secondary">.Me</span>
-        </h2>
-        <button className="w-9 h-9 rounded-full bg-primary flex items-center justify-center">
-          <Icon name="person" size={20} className="text-on-primary" />
-        </button>
+      <header className="px-5 pt-4 pb-2">
+        <div className="flex items-center justify-between max-w-5xl mx-auto">
+          <h2 className="text-lg font-bold font-headline text-primary">
+            Where2Meet<span className="text-secondary">.Me</span>
+          </h2>
+          <button className="w-9 h-9 rounded-full bg-primary flex items-center justify-center">
+            <Icon name="person" size={20} className="text-on-primary" />
+          </button>
+        </div>
       </header>
 
       <div className="max-w-5xl mx-auto">
