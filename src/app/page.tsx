@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchStore } from "@/store/search";
 import { TravelerCard } from "@/components/TravelerCard";
 import { VenueTypeSelector } from "@/components/VenueTypeSelector";
 import { Icon } from "@/components/Icon";
+import type { SearchError } from "@/lib/types";
 
 export default function HomePage() {
   const router = useRouter();
@@ -12,6 +14,7 @@ export default function HomePage() {
     participants,
     venueType,
     isSearching,
+    error,
     addParticipant,
     removeParticipant,
     updateParticipant,
@@ -21,12 +24,14 @@ export default function HomePage() {
     setError,
     canSearch,
   } = useSearchStore();
+  const [degradedWarning, setDegradedWarning] = useState(false);
 
   const handleSearch = async () => {
     if (!canSearch()) return;
 
     setSearching(true);
     setError(null);
+    setDegradedWarning(false);
 
     try {
       const res = await fetch("/api/search", {
@@ -35,18 +40,43 @@ export default function HomePage() {
         body: JSON.stringify({ participants, venueType }),
       });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error ?? "Search failed");
+      const data = await res.json();
+
+      // Check for structured error in response
+      if (data.error) {
+        setError(data.error as SearchError);
+        return;
       }
 
-      const result = await res.json();
-      setResult(result);
-      router.push(`/results/${result.shortCode}`);
+      // Check for degraded flag (warning, not error)
+      if (data.degraded) {
+        setDegradedWarning(true);
+      }
+
+      setResult(data);
+      router.push(`/results/${data.shortCode}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError({
+        type: "API_ERROR",
+        message: "Something went wrong reaching our maps. Please try again.",
+      });
     } finally {
       setSearching(false);
+    }
+  };
+
+  const getErrorMessage = (error: SearchError): string => {
+    switch (error.type) {
+      case "NO_VENUES":
+        return `No ${venueType === "coworking" ? "coworking spaces" : venueType === "cafe" ? "cafes" : venueType === "restaurant" ? "restaurants" : venueType === "bar" ? "bars" : venueType === "park" ? "parks" : "libraries"} found near your midpoint. Try a different type or add more people.`;
+      case "API_ERROR":
+        return "Something went wrong reaching our maps. Please try again.";
+      case "RATE_LIMITED":
+        return "Too many searches — please wait a moment and try again.";
+      case "DEGRADED":
+        return "Results may be less accurate due to limited data availability.";
+      default:
+        return error.message;
     }
   };
 
@@ -129,10 +159,21 @@ export default function HomePage() {
           )}
         </button>
 
-        {useSearchStore.getState().error && (
+        {error && (
           <p className="text-sm text-parity-bad text-center mt-3 font-body">
-            {useSearchStore.getState().error}
+            {getErrorMessage(error)}
           </p>
+        )}
+
+        {degradedWarning && (
+          <div className="mt-3 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+            <div className="flex items-start gap-2">
+              <Icon name="warning" size={18} className="text-amber-600 mt-0.5" />
+              <p className="text-xs text-amber-700 font-body leading-relaxed">
+                Travel time estimates are approximate due to limited routing data. Results may be less accurate than usual.
+              </p>
+            </div>
+          </div>
         )}
       </section>
 

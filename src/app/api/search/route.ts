@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { calculateFairMidpoint } from "@/lib/midpoint";
-import type { Participant, VenueType, VenueResult } from "@/lib/types";
+import type { Participant, VenueType, VenueResult, SearchError } from "@/lib/types";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_MAPS_API_KEY ?? "";
 
@@ -28,7 +28,7 @@ async function searchNearbyVenues(
   lng: number,
   venueType: VenueType,
   radius = 3000
-): Promise<VenueResult[]> {
+): Promise<VenueResult[] | { error: SearchError }> {
   const type = venueTypeToGoogleType[venueType];
   const keyword = venueTypeKeyword[venueType];
 
@@ -37,36 +37,70 @@ async function searchNearbyVenues(
     url += `&keyword=${encodeURIComponent(keyword)}`;
   }
 
-  const res = await fetch(url);
-  if (!res.ok) return [];
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      return {
+        error: {
+          type: "API_ERROR",
+          message: "Failed to reach mapping services",
+        },
+      };
+    }
 
-  const data = await res.json();
-  if (data.status !== "OK" || !data.results) return [];
+    const data = await res.json();
+    if (data.status !== "OK" || !data.results) {
+      return {
+        error: {
+          type: "API_ERROR",
+          message: "Failed to reach mapping services",
+        },
+      };
+    }
 
-  return data.results.slice(0, 15).map(
-    (place: {
-      place_id: string;
-      name: string;
-      vicinity: string;
-      formatted_address?: string;
-      geometry: { location: { lat: number; lng: number } };
-      rating?: number;
-      user_ratings_total?: number;
-      photos?: { photo_reference: string }[];
-    }): VenueResult => ({
-      placeId: place.place_id,
-      name: place.name,
-      address: place.formatted_address ?? place.vicinity,
-      shortAddress: place.vicinity,
-      lat: place.geometry.location.lat,
-      lng: place.geometry.location.lng,
-      rating: place.rating ?? null,
-      userRatingsTotal: place.user_ratings_total ?? null,
-      photoReference: place.photos?.[0]?.photo_reference ?? null,
-      fairnessScore: 0, // Calculated later
-      travelTimes: {},
-    })
-  );
+    const venues = data.results.slice(0, 15).map(
+      (place: {
+        place_id: string;
+        name: string;
+        vicinity: string;
+        formatted_address?: string;
+        geometry: { location: { lat: number; lng: number } };
+        rating?: number;
+        user_ratings_total?: number;
+        photos?: { photo_reference: string }[];
+      }): VenueResult => ({
+        placeId: place.place_id,
+        name: place.name,
+        address: place.formatted_address ?? place.vicinity,
+        shortAddress: place.vicinity,
+        lat: place.geometry.location.lat,
+        lng: place.geometry.location.lng,
+        rating: place.rating ?? null,
+        userRatingsTotal: place.user_ratings_total ?? null,
+        photoReference: place.photos?.[0]?.photo_reference ?? null,
+        fairnessScore: 0, // Calculated later
+        travelTimes: {},
+      })
+    );
+
+    if (venues.length === 0) {
+      return {
+        error: {
+          type: "NO_VENUES",
+          message: "No venues found near the midpoint",
+        },
+      };
+    }
+
+    return venues;
+  } catch {
+    return {
+      error: {
+        type: "API_ERROR",
+        message: "Failed to reach mapping services",
+      },
+    };
+  }
 }
 
 function calculateFairnessScore(travelTimes: Record<string, number>): number {
@@ -120,16 +154,29 @@ export async function POST(req: NextRequest) {
     );
 
     // Step 2: Search for venues near the midpoint
-    let venues = await searchNearbyVenues(
+    const venueSearchResult = await searchNearbyVenues(
       midpointResult.midpoint.lat,
       midpointResult.midpoint.lng,
       venueType
     );
 
+    // Handle venue search errors
+    if ("error" in venueSearchResult) {
+      const { error } = venueSearchResult;
+      if (error.type === "NO_VENUES") {
+        return NextResponse.json({ error }, { status: 200 });
+      } else {
+        return NextResponse.json({ error }, { status: 502 });
+      }
+    }
+
+    let venues = venueSearchResult;
+
     // Step 3: Calculate travel times from each participant to each venue
     // (We reuse the midpoint travel times for venues very close to the midpoint,
     //  and calculate new ones for venues further away)
     const MAPBOX_TOKEN = process.env.MAPBOX_SECRET_TOKEN ?? "";
+    let degraded = false;
 
     for (const venue of venues) {
       const venueTimes: Record<string, number> = {};
@@ -173,6 +220,7 @@ export async function POST(req: NextRequest) {
           }
         } catch {
           // Use midpoint travel times as fallback
+          degraded = true;
           for (const p of group) {
             if (midpointResult.travelTimes[p.id]) {
               venueTimes[p.id] = midpointResult.travelTimes[p.id];
@@ -200,6 +248,7 @@ export async function POST(req: NextRequest) {
             }
           }
         } catch {
+          degraded = true;
           for (const p of transitP) {
             if (midpointResult.travelTimes[p.id]) {
               venueTimes[p.id] = midpointResult.travelTimes[p.id];
@@ -230,6 +279,7 @@ export async function POST(req: NextRequest) {
       })),
       venues,
       createdAt: new Date().toISOString(),
+      degraded: degraded || undefined,
     };
 
     // TODO: Store in Supabase when configured
@@ -238,7 +288,12 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("Search error:", err);
     return NextResponse.json(
-      { error: "Failed to calculate meeting point" },
+      {
+        error: {
+          type: "API_ERROR",
+          message: "Failed to calculate meeting point",
+        } as SearchError,
+      },
       { status: 500 }
     );
   }
