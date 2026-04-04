@@ -137,6 +137,21 @@ body {
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* Scroll fade indicator for horizontal scrollable containers */
+.scroll-fade-right {
+  position: relative;
+}
+.scroll-fade-right::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(to right, transparent, var(--color-surface));
+  pointer-events: none;
+}
+
 /* Ghost border for accessibility */
 .ghost-border {
   outline: 1px solid rgba(198, 197, 212, 0.15);

@@ -99,11 +99,12 @@ export default function HomePage() {
         </button>
       </header>
 
+      <div className="max-w-5xl mx-auto">
       {/* Hero */}
       <section className="px-5 pt-2 pb-3">
         <h1 className="text-[2rem] sm:text-[2.5rem] md:text-[3.5rem] font-extrabold font-headline text-on-surface leading-[1.1] tracking-[-0.02em]">
           Where
-          <span className="text-primary">2</span>
+          <span className="text-secondary">2</span>
           Meet
           <span className="text-secondary">.Me</span>
         </h1>
@@ -113,7 +114,7 @@ export default function HomePage() {
       </section>
 
       {/* Traveler Cards */}
-      <section className="px-5 space-y-2">
+      <section className="px-5 grid gap-2 md:grid-cols-2 md:gap-4">
         {participants.map((p, i) => (
           <TravelerCard
             key={p.id}
@@ -128,7 +129,7 @@ export default function HomePage() {
         {participants.length < 6 && (
           <button
             onClick={addParticipant}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-surface-low text-on-surface-variant hover:bg-surface-high transition-colors text-sm font-medium font-body"
+            className="w-full md:col-span-2 flex items-center justify-center gap-2 py-3 rounded-2xl bg-surface-low text-on-surface-variant hover:bg-surface-high transition-colors text-sm font-medium font-body"
           >
             <Icon name="add" size={20} />
             Add person
@@ -152,7 +153,7 @@ export default function HomePage() {
         <button
           onClick={handleSearch}
           disabled={!allLocationsSet || isSearching}
-          className="w-full py-6 rounded-full bg-gradient-to-br from-primary to-primary-container text-white font-headline font-extrabold text-lg flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full md:w-auto md:px-16 md:mx-auto py-6 rounded-full bg-gradient-to-br from-primary to-primary-container text-white font-headline font-extrabold text-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label={isSearching ? "Finding great spots" : "Find a great spot"}
         >
           {isSearching ? (
@@ -185,6 +186,7 @@ export default function HomePage() {
           </div>
         )}
       </section>
+      </div>
     </div>
   );
 }

@@ -26,14 +26,14 @@ export function TravelModeChips({ selected, onSelect }: TravelModeChipsProps) {
             onClick={() => onSelect(mode)}
             role="radio"
             aria-checked={isSelected}
-            className={`flex-1 py-1.5 sm:py-3 px-2 rounded-xl flex flex-row sm:flex-col items-center justify-center gap-1.5 sm:gap-1 transition-all ${
+            className={`flex-1 md:flex-none py-1.5 sm:py-3 px-2 rounded-xl flex flex-row items-center justify-center gap-1.5 md:w-12 md:h-12 md:p-0 md:flex-col md:justify-center transition-all ${
               isSelected
                 ? "bg-primary text-white"
                 : "bg-surface-high text-on-surface-variant hover:bg-surface-highest"
             }`}
           >
             <Icon name={icon} size={18} filled={isSelected} />
-            <span className="text-[10px] font-bold uppercase font-body">{label}</span>
+            <span className="text-[10px] font-bold uppercase font-body md:sr-only">{label}</span>
           </button>
         );
       })}
