@@ -12,7 +12,6 @@ interface TravelerCardProps {
   canRemove: boolean;
   onUpdate: (id: string, updates: Partial<Participant>) => void;
   onRemove: (id: string) => void;
-  collectToken?: string;
 }
 
 export function TravelerCard({
@@ -21,11 +20,8 @@ export function TravelerCard({
   canRemove,
   onUpdate,
   onRemove,
-  collectToken,
 }: TravelerCardProps) {
   const [isEditingLabel, setIsEditingLabel] = useState(false);
-  const [showCopied, setShowCopied] = useState(false);
-
   const handleLocationSelect = (place: {
     placeId: string;
     displayName: string;
@@ -56,30 +52,8 @@ export function TravelerCard({
   const handleLabelBlur = () => {
     setIsEditingLabel(false);
     if (!participant.label.trim()) {
-      const labels = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta"];
+      const labels = ["You", "Them", "Person 3", "Person 4", "Person 5", "Person 6"];
       onUpdate(participant.id, { label: labels[index] ?? `Traveler ${index + 1}` });
-    }
-  };
-
-  const handleInvite = async () => {
-    if (!collectToken) return;
-
-    const inviteUrl = `${window.location.origin}/collect/${collectToken}`;
-
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: "Where2Meet.Me — Share Your Location",
-          text: `Help us find a great spot to meet! Share your location:`,
-          url: inviteUrl,
-        });
-      } else {
-        await navigator.clipboard.writeText(inviteUrl);
-        setShowCopied(true);
-        setTimeout(() => setShowCopied(false), 2000);
-      }
-    } catch (err) {
-      // Share cancelled or failed
     }
   };
 
@@ -117,25 +91,11 @@ export function TravelerCard({
               <Icon name="close" size={18} />
             </button>
           )}
-          <Icon name="person" size={22} className="text-primary-container" />
+
         </div>
       </div>
 
       <div className="space-y-1 relative">
-        <div className="flex items-center justify-between">
-          <label className="text-[10px] font-medium text-on-surface-variant uppercase tracking-widest font-body">
-            Origin
-          </label>
-          {collectToken && !participant.originLat && !participant.originLng && (
-            <button
-              onClick={handleInvite}
-              className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors font-body"
-            >
-              <Icon name="share" size={16} />
-              {showCopied ? "Copied!" : "Invite"}
-            </button>
-          )}
-        </div>
         <LocationInput
           value={participant.originDisplayName}
           onChange={handleLocationSelect}

@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import type { Participant, TravelMode, VenueType, SearchResult, SearchError } from "@/lib/types";
 
 function createParticipant(index: number): Participant {
-  const labels = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta"];
+  const labels = ["You", "Them", "Person 3", "Person 4", "Person 5", "Person 6"];
   return {
     id: nanoid(),
     label: labels[index] ?? `Traveler ${index + 1}`,
